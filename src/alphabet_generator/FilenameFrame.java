@@ -101,7 +101,7 @@ public class FilenameFrame extends javax.swing.JFrame {
         jButtonOpen = new javax.swing.JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
-        setTitle("Alphabet Generator - plik alfabetu");
+        setTitle("Alphabet Generator - alphabet file");
 
         jTextDir.addCaretListener(new javax.swing.event.CaretListener() {
             public void caretUpdate(javax.swing.event.CaretEvent evt) {
@@ -110,13 +110,14 @@ public class FilenameFrame extends javax.swing.JFrame {
         });
 
         jButtonSelect.setText("...");
+        jButtonSelect.setMargin(new java.awt.Insets(2, 2, 2, 2));
         jButtonSelect.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseClicked(java.awt.event.MouseEvent evt) {
                 jButtonSelectMouseClicked(evt);
             }
         });
 
-        jButtonOpen.setText("Otwórz");
+        jButtonOpen.setText("Open");
         jButtonOpen.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseClicked(java.awt.event.MouseEvent evt) {
                 jButtonOpenMouseClicked(evt);
@@ -193,7 +194,7 @@ public class FilenameFrame extends javax.swing.JFrame {
                 setVisible(false);
                 dispose();
             } else {
-                JOptionPane.showMessageDialog(null, "Niepoprawny format pliku", "Weryfikacja pliku", JOptionPane.WARNING_MESSAGE);
+                JOptionPane.showMessageDialog(null, "Not supported file format", "File verification", JOptionPane.WARNING_MESSAGE);
             }
         } 
     }//GEN-LAST:event_jButtonOpenMouseClicked

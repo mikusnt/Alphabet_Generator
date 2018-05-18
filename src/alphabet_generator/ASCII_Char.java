@@ -182,7 +182,7 @@ public class ASCII_Char implements Comparator<ASCII_Char>, Comparable<ASCII_Char
     /**
      * @param codes the codes to set
      */
-    public final void setCodes(int[] codes) {
+    public final void setCodes(int[] codes) throws ArrayIndexOutOfBoundsException {
         if (codes.length == CODES_LENGTH)
             this.codes = codes;
         else throw new ArrayIndexOutOfBoundsException("Wrong number of array named codes: " + codes.length + " required: "+CODES_LENGTH);

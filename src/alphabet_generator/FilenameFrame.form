@@ -7,7 +7,7 @@
   </NonVisualComponents>
   <Properties>
     <Property name="defaultCloseOperation" type="int" value="3"/>
-    <Property name="title" type="java.lang.String" value="Alphabet Generator - plik alfabetu"/>
+    <Property name="title" type="java.lang.String" value="Alphabet Generator - alphabet file"/>
   </Properties>
   <SyntheticProperties>
     <SyntheticProperty name="formSizePolicy" type="int" value="1"/>
@@ -66,6 +66,9 @@
     <Component class="javax.swing.JButton" name="jButtonSelect">
       <Properties>
         <Property name="text" type="java.lang.String" value="..."/>
+        <Property name="margin" type="java.awt.Insets" editor="org.netbeans.beaninfo.editors.InsetsEditor">
+          <Insets value="[2, 2, 2, 2]"/>
+        </Property>
       </Properties>
       <Events>
         <EventHandler event="mouseClicked" listener="java.awt.event.MouseListener" parameters="java.awt.event.MouseEvent" handler="jButtonSelectMouseClicked"/>
@@ -73,7 +76,7 @@
     </Component>
     <Component class="javax.swing.JButton" name="jButtonOpen">
       <Properties>
-        <Property name="text" type="java.lang.String" value="Otw&#xf3;rz"/>
+        <Property name="text" type="java.lang.String" value="Open"/>
       </Properties>
       <Events>
         <EventHandler event="mouseClicked" listener="java.awt.event.MouseListener" parameters="java.awt.event.MouseEvent" handler="jButtonOpenMouseClicked"/>

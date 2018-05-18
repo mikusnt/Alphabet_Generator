@@ -49,7 +49,7 @@ public class Main_Frame extends javax.swing.JFrame {
         initComponents();
         this.filename = filename;
         File f = new File(filename);
-        setTitle(f.getName());
+        setTitle("Alphabet Generator - " + f.getName());
        
         this.checkBoxes = new JCheckBox[][]{
             { jCheck_00, jCheck_01, jCheck_02, jCheck_03, jCheck_04, jCheck_05, jCheck_06, jCheck_07 },
@@ -356,7 +356,11 @@ public class Main_Frame extends javax.swing.JFrame {
         jLabelNumbers.setHorizontalAlignment(javax.swing.SwingConstants.LEFT);
         jLabelNumbers.setText("jLabel5");
 
-        jButtonClear.setLabel("Wyczyść");
+        jButtonClear.setText("Clear");
+        jButtonClear.setMargin(new java.awt.Insets(2, 2, 2, 2));
+        jButtonClear.setMaximumSize(new java.awt.Dimension(63, 23));
+        jButtonClear.setMinimumSize(new java.awt.Dimension(63, 23));
+        jButtonClear.setPreferredSize(new java.awt.Dimension(63, 23));
         jButtonClear.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseClicked(java.awt.event.MouseEvent evt) {
                 jButtonClearMouseClicked(evt);
@@ -452,8 +456,8 @@ public class Main_Frame extends javax.swing.JFrame {
                         .addComponent(jCheck_47)))
                 .addGap(0, 0, Short.MAX_VALUE))
             .addGroup(jCheckPanelLayout.createSequentialGroup()
-                .addContainerGap()
-                .addComponent(jButtonClear)
+                .addGap(21, 21, 21)
+                .addComponent(jButtonClear, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
         jCheckPanelLayout.setVerticalGroup(
@@ -535,28 +539,29 @@ public class Main_Frame extends javax.swing.JFrame {
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(jLabelNumbers)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jButtonClear, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addComponent(jButtonClear, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addContainerGap())
         );
 
-        jButtonAdd.setText("Dodaj");
+        jButtonAdd.setText("Add");
+        jButtonAdd.setMaximumSize(new java.awt.Dimension(63, 23));
+        jButtonAdd.setMinimumSize(new java.awt.Dimension(63, 23));
+        jButtonAdd.setPreferredSize(new java.awt.Dimension(63, 23));
         jButtonAdd.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseClicked(java.awt.event.MouseEvent evt) {
                 jButtonAddMouseClicked(evt);
             }
         });
 
-        jButtonDelete.setText("Usuń");
+        jButtonDelete.setText("Delete");
         jButtonDelete.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseClicked(java.awt.event.MouseEvent evt) {
                 jButtonDeleteMouseClicked(evt);
             }
         });
 
-        jButtonSaveToFile.setText("Zapisz");
-        jButtonSaveToFile.setMaximumSize(new java.awt.Dimension(75, 23));
-        jButtonSaveToFile.setMinimumSize(new java.awt.Dimension(75, 23));
-        jButtonSaveToFile.setPreferredSize(new java.awt.Dimension(75, 23));
+        jButtonSaveToFile.setText("Generate");
+        jButtonSaveToFile.setMargin(new java.awt.Insets(2, 2, 2, 2));
         jButtonSaveToFile.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseClicked(java.awt.event.MouseEvent evt) {
                 jButtonSaveToFileMouseClicked(evt);
@@ -564,6 +569,7 @@ public class Main_Frame extends javax.swing.JFrame {
         });
 
         jButtonUp.setText("▲");
+        jButtonUp.setMargin(new java.awt.Insets(2, 2, 2, 2));
         jButtonUp.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseClicked(java.awt.event.MouseEvent evt) {
                 jButtonUpMouseClicked(evt);
@@ -571,6 +577,7 @@ public class Main_Frame extends javax.swing.JFrame {
         });
 
         jButtonDown.setText("▼");
+        jButtonDown.setMargin(new java.awt.Insets(2, 2, 2, 2));
         jButtonDown.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseClicked(java.awt.event.MouseEvent evt) {
                 jButtonDownMouseClicked(evt);
@@ -584,21 +591,21 @@ public class Main_Frame extends javax.swing.JFrame {
             .addGroup(layout.createSequentialGroup()
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
-                    .addGroup(layout.createSequentialGroup()
+                    .addGroup(javax.swing.GroupLayout.Alignment.LEADING, layout.createSequentialGroup()
                         .addComponent(jButtonDelete)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                        .addComponent(jButtonAdd))
+                        .addComponent(jButtonAdd, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                     .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 305, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jCheckPanel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addGroup(layout.createSequentialGroup()
-                        .addGap(10, 10, 10)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                                .addComponent(jButtonDown)
-                                .addComponent(jButtonUp))
-                            .addComponent(jButtonSaveToFile, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))))
+                            .addComponent(jCheckPanel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(jButtonDown)
+                            .addComponent(jButtonUp)))
+                    .addGroup(layout.createSequentialGroup()
+                        .addGap(28, 28, 28)
+                        .addComponent(jButtonSaveToFile, javax.swing.GroupLayout.PREFERRED_SIZE, 63, javax.swing.GroupLayout.PREFERRED_SIZE)))
                 .addGap(10, 10, 10))
         );
         layout.setVerticalGroup(
@@ -613,11 +620,12 @@ public class Main_Frame extends javax.swing.JFrame {
                         .addComponent(jButtonUp)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(jButtonDown)))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED, 19, Short.MAX_VALUE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jButtonAdd)
                     .addComponent(jButtonDelete)
-                    .addComponent(jButtonSaveToFile, javax.swing.GroupLayout.PREFERRED_SIZE, 23, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                        .addComponent(jButtonAdd, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addComponent(jButtonSaveToFile)))
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
@@ -661,8 +669,8 @@ public class Main_Frame extends javax.swing.JFrame {
         if (jTableMain.getRowCount() > 0) {
             if (JOptionPane.showConfirmDialog(
             this,
-            "Czy na pewno usunąć/oczyścić wskazany znak?",
-            "Pytanie - usuwanie/oczyszczanie znaku",
+            "Are you sure to removing/clearing '" + list.get(selectedRow).getSign()+ "' char?",
+            "Question - removing/clearing char",
             JOptionPane.YES_NO_OPTION) == 0) {
                 list.remove(selectedRow);
                 if (selectedRow == jTableMain.getRowCount() - 1)  {
