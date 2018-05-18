@@ -1,4 +1,4 @@
-/*
+/**
  * Copyright (C) 2018 MS-1
  *
  * This program is free software: you can redistribute it and/or modify
@@ -13,6 +13,9 @@
  *
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ * @author Mikolaj Stankowiak
+ * @since 2018-05-18
+    
  */
 package alphabet_generator;
 
@@ -20,8 +23,8 @@ import java.util.Arrays;
 import java.util.Comparator;
 
 /**
- *
- * @author MS-1
+ * Object represents 5x8 pixels (5 byte) codes to translate to diodes state in Matrix_Clock 
+ * @author Mikolaj Stankowiak
  */
 public class ASCII_Char implements Comparator<ASCII_Char>, Comparable<ASCII_Char>, Cloneable {
     private static final int CODES_LENGTH = 5;
@@ -32,16 +35,23 @@ public class ASCII_Char implements Comparator<ASCII_Char>, Comparable<ASCII_Char
     private int id;
     private int modifiedDots;
     private int length;
-    
+   
+    /*
+     * 
+     *      Constructors 
+     * 
+     */
     public ASCII_Char(int id) {
         this.id = id;
         this.sign = '?';
         this.description = "";
     }
+    
     public ASCII_Char(int id, int[] codes) {
         this(id);
         setCodes(codes);    
     }
+    
     public ASCII_Char(ASCII_Char original) {
         this.sign = original.getSign();
         this.codes = original.getCodes().clone();
@@ -49,10 +59,17 @@ public class ASCII_Char implements Comparator<ASCII_Char>, Comparable<ASCII_Char
         this.id = original.getId();
         calculateDotsLength();
     }
+    
     public ASCII_Char(ASCII_Char original, int newId) {
         this(original);
         this.id = newId;
     }
+    
+    /*
+    
+            Main methods
+    
+    */
     private void calculateDotsLength() {
         modifiedDots = 0;
         for (int i = 0; i < CODES_LENGTH; i++) {
@@ -88,10 +105,15 @@ public class ASCII_Char implements Comparator<ASCII_Char>, Comparable<ASCII_Char
         calculateDotsLength();
     }
     
+    /*
+     * 
+     *      CSV 
+     * 
+     */
     public String toCSVLine() {
-
         return String.valueOf(id) + SEP + String.valueOf(sign) + SEP + description + SEP + Arrays.toString(codes).replace(" ", "").replace("[", "").replace("]", "").replace(",", SEP) + "\n";
     }
+    
     public static ASCII_Char fromCSVLine(String line) {
         
         String[] tokens = line.split(ASCII_Char.SEP);
@@ -111,15 +133,31 @@ public class ASCII_Char implements Comparator<ASCII_Char>, Comparable<ASCII_Char
         return null;
     }
     
+    /*
+    
+            Compare, clone
+    
+    */
     @Override
     public int compareTo(ASCII_Char e) {
         return id - e.getId();
     }
+    
     @Override
     public int compare(ASCII_Char one, ASCII_Char two) {
         return one.compareTo(two);
     }
     
+    @Override
+    public Object clone() throws CloneNotSupportedException {
+        return super.clone();
+    }
+    
+    /*
+    
+            Getters, setters
+    
+    */
     /**
      * @return the sign
      */
@@ -186,8 +224,5 @@ public class ASCII_Char implements Comparator<ASCII_Char>, Comparable<ASCII_Char
         return length;
     }
     
-    @Override
-    public Object clone() throws CloneNotSupportedException {
-        return super.clone();
-    }
+
 }

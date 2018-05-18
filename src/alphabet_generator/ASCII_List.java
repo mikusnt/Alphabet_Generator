@@ -43,15 +43,20 @@ import java.util.logging.Logger;
 public class ASCII_List implements Iterable<ASCII_Char>{
     private final List<ASCII_Char> list;
 
+    /*
+    
+            Constructors
+    
+    */
     public ASCII_List() {
         this.list = new ArrayList<>();
     }
-    private int getFirstId() {
-        return list.get(0).getId();
-    }
-    private int getLastId() {
-        return list.get(list.size()-1).getId();
-    }
+    
+    /*
+    
+            Main methods
+    
+    */
     public boolean isIdInList(int newId) {
         for (ASCII_Char item : list) {
             if (newId == item.getId())
@@ -59,7 +64,39 @@ public class ASCII_List implements Iterable<ASCII_Char>{
         }
         return false;
     }
-    public int tryAdd(ASCII_Char e) throws IllegalAccessException {
+    
+    public int renameItemId(int index, int newId) {
+        if (list.get(index).getId() != newId) {
+            try {
+                if (isIdInList(newId)) 
+                    throw new IllegalAccessException("Id " + newId + " is in the list");
+                ASCII_Char copy = new ASCII_Char(list.get(index), newId);
+                list.remove(index);
+                tryAdd(copy);
+            } catch (IllegalAccessException e) {
+                System.out.println(e.toString());
+            }
+        }
+        return tryFindId(newId);
+    }
+    
+    public void swapIndexes(int index0, int index1) {
+        try {
+        if ((index0 < list.size()) && (index1 < list.size())) {
+            ASCII_Char temp = new ASCII_Char(list.get(index0), list.get(index1).getId());
+            list.set(index0, new ASCII_Char(list.get(index1), list.get(index0).getId()));
+            list.set(index1, temp);  
+        } else {
+            throw new IndexOutOfBoundsException();
+        }
+        } catch (IndexOutOfBoundsException e) {
+            System.out.println(e.toString());
+        }
+    }
+    
+    public int tryAdd(ASCII_Char e) throws IllegalAccessException, NullPointerException {
+        if (e == null)
+            throw new NullPointerException("Empty object of ASCII_Char");
         if (isIdInList(e.getId()))
                 throw new IllegalAccessException("Id " + e.getId() + " is in the list");
         if (list.isEmpty())
@@ -78,21 +115,28 @@ public class ASCII_List implements Iterable<ASCII_Char>{
         }
         list.sort((ASCII_Char o1, ASCII_Char o2) -> o1.getId() - o2.getId());
         Collections.sort(list);
+        return tryFindId(e.getId());
+    }
+    
+    private int tryFindId(int id) {
         for(int i = 0; i < list.size(); i++) {
-            if (list.get(i).getId() == e.getId())
+            if (list.get(i).getId() == id)
                 return i;
         }
         throw new ArrayIndexOutOfBoundsException("Can't find object in list");
     }
+    
     private void removeLast() {
         if (list.size() > 0) {
             list.remove(list.size()-1);
         }
     }
+    
     private void removeFirst() {
         if (list.size() > 0)
             list.remove(0);
     }
+    
     public void remove(int index) {
         if (list.size() > 0) {
             if (list.get(index).getId() == getLastId()) {
@@ -104,22 +148,6 @@ public class ASCII_List implements Iterable<ASCII_Char>{
                 list.set(index, new ASCII_Char(list.get(index).getId()));
             }
         }
-    }
-    public ASCII_Char get(int index) {
-        return list.get(index);
-    }
-    public void set(int index, ASCII_Char value) {
-        list.set(index, value);
-    }
-    public String toCSVLine(int id) {
-        if (id < list.size())
-            return list.get(id).toCSVLine();
-        else
-            return "";
-    }
-    
-    public int getListSize() {
-        return list.size();
     }
     
     @Override
@@ -136,7 +164,12 @@ public class ASCII_List implements Iterable<ASCII_Char>{
         return list.iterator();
     }
     
-    public void saveToFile(String filename){
+    /*
+    
+            CSV
+    
+    */
+    public void saveToCSV(String filename){
         File f = new File(filename);
         try (PrintWriter file = new PrintWriter(f)) {
             file.print(this.toString());
@@ -163,6 +196,29 @@ public class ASCII_List implements Iterable<ASCII_Char>{
         return newList;
     }
     
+    public static boolean verifyCSV(String filename) {
+        ASCII_List newList = new ASCII_List();
+        try {
+            FileReader reader = new FileReader(filename);
+            try (BufferedReader file = new BufferedReader(reader)) {
+                String str;
+                str = file.readLine(); 
+                if (str == null)
+                    return true;
+                newList.tryAdd(ASCII_Char.fromCSVLine(str));
+            }
+        } catch (IOException | IllegalAccessException | NullPointerException e) {
+            System.out.println(e.toString());
+            return false;
+        }
+        return true;
+    }
+    
+   /*
+    
+            Getters, setters
+    
+    */ 
     public int getNextEmptyId(int index) {
         if (list.isEmpty())
             return 0;
@@ -175,30 +231,23 @@ public class ASCII_List implements Iterable<ASCII_Char>{
         return id + 1;
     }
     
-    public void renameItemId(int index, int newId) {
-        if (list.get(index).getId() != newId) {
-            try {
-                if (isIdInList(newId)) 
-                    throw new IllegalAccessException("Id " + newId + " is in the list");
-                ASCII_Char copy = new ASCII_Char(list.get(index), newId);
-                list.remove(index);
-                tryAdd(copy);
-            } catch (IllegalAccessException e) {
-                System.out.println(e.toString());
-            }
-        }    
+    private int getFirstId() {
+        return list.get(0).getId();
     }
-    public void swapIndexes(int index0, int index1) {
-        try {
-        if ((index0 < list.size()) && (index1 < list.size())) {
-            ASCII_Char temp = new ASCII_Char(list.get(index0), list.get(index1).getId());
-            list.set(index0, new ASCII_Char(list.get(index1), list.get(index0).getId()));
-            list.set(index1, temp);  
-        } else {
-            throw new IndexOutOfBoundsException();
-        }
-        } catch (IndexOutOfBoundsException e) {
-            System.out.println(e.toString());
-        }
+    
+    private int getLastId() {
+        return list.get(list.size()-1).getId();
     }
+    
+    public ASCII_Char get(int index) {
+        return list.get(index);
+    }
+    
+    private void set(int index, ASCII_Char value) {
+        list.set(index, value);
+    }
+    
+    public int getListSize() {
+        return list.size();
+    } 
 }
