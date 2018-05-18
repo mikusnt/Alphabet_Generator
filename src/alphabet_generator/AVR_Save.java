@@ -30,13 +30,13 @@ import java.util.Date;
 public class AVR_Save {
     private final ASCII_List list;
     private final String headerName = "alphabet_codes.h";
-    private final String header = "/*\n" +
+    private final String header = "/**\n" +
         " * @file alphabet_codes.h\n" +
         " * @author\t\tMikolaj Stankowiak <br>\n" +
         " * \t\t\t\tmik-stan@go2.pl\n" +
         " * 				\n" +
         " * $Created: %s $\n" +
-        " * Header file containing byte pixels table of chars and chars byte length in PROGMEM. \n" +
+        " * Header file containing byte pixels table (Alphabet) of chars and chars byte length in PROGMEM. <br>\n" +
         " * Created by Alphabet_Generator.\n" + 
         " */\n" +
         "#ifndef SEQ_ALPHABET_CODES_H_\n" +
