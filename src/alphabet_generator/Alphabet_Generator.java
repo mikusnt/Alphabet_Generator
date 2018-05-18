@@ -32,6 +32,7 @@ public class Alphabet_Generator {
         //frame.setVisible(true);
         Filename_Frame file = new Filename_Frame();
         file.setVisible(true);
+        
 
     }
     

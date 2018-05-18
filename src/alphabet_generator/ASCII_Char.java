@@ -134,21 +134,25 @@ public class ASCII_Char implements Comparator<ASCII_Char>, Comparable<ASCII_Char
         return null;
     }
     
-    public String getHLine(boolean withComma) {
-        String line;
+    public String getHLineComment(String prefix) {
         String descriptionText = "";
         if (description.length() > 0) 
             descriptionText = " " + description;
-        line = "// " + sign + descriptionText + ", y = " + id + "\n";
-        line += "{ ";
+        return prefix + "// " + sign + descriptionText + ", y = " + id;
+    }
+    public String getHComment_Code(boolean withComma, String prefix) {
+        String line;
+        line = getHLineComment(prefix) + "\n";
+        line += prefix + "{ ";
         for(int i = 0; i < CODES_LENGTH - 1; i++) {
-            line += String.format("x%02X, ", codes[i] & 0xff);
+            
+            line += String.format("0x%02X, ", codes[i] & 0xff);
         }
         line += String.format("0x%02X ", codes[CODES_LENGTH - 1] & 0xff);
         if (withComma == true) 
-            line += "},\n";
+            line += "},";
         else
-            line += "}\n";
+            line += "}";
         return line;
     }
     

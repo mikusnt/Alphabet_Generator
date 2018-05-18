@@ -685,18 +685,13 @@ public class Main_Frame extends javax.swing.JFrame {
     }//GEN-LAST:event_jButtonDeleteMouseClicked
 
     private void jButtonSaveToFileMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jButtonSaveToFileMouseClicked
+        jButtonSaveToFile.setEnabled(false);
         list.saveToCSV(filename);
-        File f = new File("code.txt");
-        try {
-            f.createNewFile();
-            try (PrintWriter writer = new PrintWriter(f)) {
-                writer.print(list.getHList());
-                Desktop dt = Desktop.getDesktop();
-                dt.open(f);
-            }
-        } catch (IOException e) {
-            System.out.println(e.toString());
-        }
+        AVR_Save avr = new AVR_Save(list);
+        avr.saveHeader();
+        avr.saveC();
+        jButtonSaveToFile.setEnabled(true);
+
     }//GEN-LAST:event_jButtonSaveToFileMouseClicked
 
     private void formWindowClosing(java.awt.event.WindowEvent evt) {//GEN-FIRST:event_formWindowClosing

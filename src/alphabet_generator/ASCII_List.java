@@ -214,11 +214,20 @@ public class ASCII_List implements Iterable<ASCII_Char>{
         return true;
     }
     
-    public String getHList() {
+    public String getHComment_Codes(String prefix) {
+        String out = "";
+        for (int i = 0; i < list.size() - 1; i++) {
+            out += list.get(i).getHComment_Code(true, prefix) + "\n";
+        }
+        out += list.get(list.size() - 1).getHComment_Code(false, prefix) + "\n";
+        return out;
+    }
+    
+    public String getHLengths(String prefix) {
         String out = "";
         for (int i = 0; i < list.size() - 1; i++)
-            out += list.get(i).getHLine(true);
-        out += list.get(list.size() - 1).getHLine(false);
+            out += prefix + list.get(i).getLength() + ", " + list.get(i).getHLineComment("") + "\n";
+        out += prefix + list.get(list.size() - 1).getLength() + " " + list.get(list.size() - 1).getHLineComment("") + "\n";
         return out;
     }
     
@@ -255,7 +264,7 @@ public class ASCII_List implements Iterable<ASCII_Char>{
         list.set(index, value);
     }
     
-    public int getListSize() {
+    public int getSize() {
         return list.size();
     } 
 }
