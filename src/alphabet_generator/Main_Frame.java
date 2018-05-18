@@ -560,7 +560,7 @@ public class Main_Frame extends javax.swing.JFrame {
     private void jButton1MouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jButton1MouseClicked
         if (JOptionPane.showConfirmDialog(
         this,
-        "Czy na pewno?",
+        "Czy na pewno oczyścić okno wartości?",
         "Pytanie - czyszczenie okna",
         JOptionPane.YES_NO_OPTION) == 0) {
             clearCheckBoxes();
@@ -579,10 +579,10 @@ public class Main_Frame extends javax.swing.JFrame {
     }//GEN-LAST:event_jCheck_06ActionPerformed
 
     private void jButton2MouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jButton2MouseClicked
-        selectedRow = jTableMain.getSelectedRow();
+        //selectedRow = jTableMain.getSelectedRow();
         int newId = list.getNextEmptyId(jTableMain.getSelectedRow());
         try {
-            list.tryAdd(new ASCII_Char(newId));
+            selectedRow = list.tryAdd(new ASCII_Char(newId));
         } catch (IllegalAccessException e) {
             System.out.println(e.toString());
         }
@@ -590,8 +590,20 @@ public class Main_Frame extends javax.swing.JFrame {
     }//GEN-LAST:event_jButton2MouseClicked
 
     private void jButton3MouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jButton3MouseClicked
-        list.remove(jTableMain.getSelectedRow());
-        refreshList();
+        if (jTableMain.getRowCount() > 0) {
+            if (JOptionPane.showConfirmDialog(
+            this,
+            "Czy na pewno usunąć/oczyścić wskazany znak?",
+            "Pytanie - usuwanie/oczyszczanie znaku",
+            JOptionPane.YES_NO_OPTION) == 0) {
+                list.remove(selectedRow);
+                if (selectedRow == jTableMain.getRowCount() - 1)  {
+                    selectedRow--;
+                }
+                //jTableMain.setRowSelectionInterval(selectedRow, selectedRow);
+                refreshList();
+            }
+        }
     }//GEN-LAST:event_jButton3MouseClicked
 
     private void jButton4MouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jButton4MouseClicked

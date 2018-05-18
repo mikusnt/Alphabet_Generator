@@ -59,7 +59,7 @@ public class ASCII_List implements Iterable<ASCII_Char>{
         }
         return false;
     }
-    public void tryAdd(ASCII_Char e) throws IllegalAccessException {
+    public int tryAdd(ASCII_Char e) throws IllegalAccessException {
         if (isIdInList(e.getId()))
                 throw new IllegalAccessException("Id " + e.getId() + " is in the list");
         if (list.isEmpty())
@@ -78,6 +78,11 @@ public class ASCII_List implements Iterable<ASCII_Char>{
         }
         list.sort((ASCII_Char o1, ASCII_Char o2) -> o1.getId() - o2.getId());
         Collections.sort(list);
+        for(int i = 0; i < list.size(); i++) {
+            if (list.get(i).getId() == e.getId())
+                return i;
+        }
+        throw new ArrayIndexOutOfBoundsException("Can't find object in list");
     }
     private void removeLast() {
         if (list.size() > 0) {
@@ -102,6 +107,9 @@ public class ASCII_List implements Iterable<ASCII_Char>{
     }
     public ASCII_Char get(int index) {
         return list.get(index);
+    }
+    public void set(int index, ASCII_Char value) {
+        list.set(index, value);
     }
     public String toCSVLine(int id) {
         if (id < list.size())
@@ -178,7 +186,19 @@ public class ASCII_List implements Iterable<ASCII_Char>{
             } catch (IllegalAccessException e) {
                 System.out.println(e.toString());
             }
+        }    
+    }
+    public void swapIndexes(int index0, int index1) {
+        try {
+        if ((index0 < list.size()) && (index1 < list.size())) {
+            ASCII_Char temp = new ASCII_Char(list.get(index0), list.get(index1).getId());
+            list.set(index0, new ASCII_Char(list.get(index1), list.get(index0).getId()));
+            list.set(index1, temp);  
+        } else {
+            throw new IndexOutOfBoundsException();
         }
-        
+        } catch (IndexOutOfBoundsException e) {
+            System.out.println(e.toString());
+        }
     }
 }

@@ -36,6 +36,7 @@ public class ASCII_Char implements Comparator<ASCII_Char>, Comparable<ASCII_Char
     public ASCII_Char(int id) {
         this.id = id;
         this.sign = '?';
+        this.description = "";
     }
     public ASCII_Char(int id, int[] codes) {
         this(id);
