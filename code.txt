@@ -1,0 +1,6 @@
+// A first letter, y = 0
+{ x7C, x12, x11, x12, 0x7C },
+// B second letter, y = 1
+{ x7F, x49, x49, x49, 0x3E },
+// C third letter, y = 2
+{ x1C, x22, x41, x41, 0x00 }

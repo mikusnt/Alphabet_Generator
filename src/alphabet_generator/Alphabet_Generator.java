@@ -30,7 +30,7 @@ public class Alphabet_Generator {
         //System.out.println(lista.toString());
         //Main_Frame frame = new Main_Frame();
         //frame.setVisible(true);
-        FilenameFrame file = new FilenameFrame();
+        Filename_Frame file = new Filename_Frame();
         file.setVisible(true);
 
     }

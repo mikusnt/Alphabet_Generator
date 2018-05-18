@@ -214,6 +214,14 @@ public class ASCII_List implements Iterable<ASCII_Char>{
         return true;
     }
     
+    public String getHList() {
+        String out = "";
+        for (int i = 0; i < list.size() - 1; i++)
+            out += list.get(i).getHLine(true);
+        out += list.get(list.size() - 1).getHLine(false);
+        return out;
+    }
+    
    /*
     
             Getters, setters

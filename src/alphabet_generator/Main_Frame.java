@@ -6,6 +6,7 @@
 package alphabet_generator;
 
 import java.awt.Color;
+import java.awt.Desktop;
 import java.awt.Label;
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
@@ -16,6 +17,7 @@ import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
+import java.io.PrintWriter;
 import java.util.Arrays;
 import java.util.Properties;
 import java.util.Vector;
@@ -684,6 +686,17 @@ public class Main_Frame extends javax.swing.JFrame {
 
     private void jButtonSaveToFileMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jButtonSaveToFileMouseClicked
         list.saveToCSV(filename);
+        File f = new File("code.txt");
+        try {
+            f.createNewFile();
+            try (PrintWriter writer = new PrintWriter(f)) {
+                writer.print(list.getHList());
+                Desktop dt = Desktop.getDesktop();
+                dt.open(f);
+            }
+        } catch (IOException e) {
+            System.out.println(e.toString());
+        }
     }//GEN-LAST:event_jButtonSaveToFileMouseClicked
 
     private void formWindowClosing(java.awt.event.WindowEvent evt) {//GEN-FIRST:event_formWindowClosing

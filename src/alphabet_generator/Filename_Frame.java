@@ -32,13 +32,13 @@ import javax.swing.JOptionPane;
  *
  * @author MS
  */
-public class FilenameFrame extends javax.swing.JFrame {
+public class Filename_Frame extends javax.swing.JFrame {
     private final String CONFIG_NAME = "settings.conf";
     private final String PATH_KEY = "default_path";
     /**
      * Creates new form FilenameFrame
      */
-    public FilenameFrame() {
+    public Filename_Frame() {
         initComponents();
         readProperties();
         tryEnableOpen();
@@ -53,7 +53,7 @@ public class FilenameFrame extends javax.swing.JFrame {
     
     private String getDefaultPath() {
         try {
-        String path = FilenameFrame.class.getProtectionDomain().getCodeSource().getLocation().getPath();
+        String path = Filename_Frame.class.getProtectionDomain().getCodeSource().getLocation().getPath();
         return URLDecoder.decode(path, "UTF-8");
         } catch (UnsupportedEncodingException e) {
             System.out.println(e.toString());
@@ -158,7 +158,9 @@ public class FilenameFrame extends javax.swing.JFrame {
         f.setFileSelectionMode(JFileChooser.FILES_ONLY); 
         f.setCurrentDirectory(new File(getDefaultPath()));
         f.showSaveDialog(null);
-        jTextDir.setText(f.getSelectedFile().toString());
+        if (f.getSelectedFile() != null) {
+            jTextDir.setText(f.getSelectedFile().toString());
+        }
         
         
 
@@ -217,20 +219,21 @@ public class FilenameFrame extends javax.swing.JFrame {
                 }
             }
         } catch (ClassNotFoundException ex) {
-            java.util.logging.Logger.getLogger(FilenameFrame.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+            java.util.logging.Logger.getLogger(Filename_Frame.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
         } catch (InstantiationException ex) {
-            java.util.logging.Logger.getLogger(FilenameFrame.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+            java.util.logging.Logger.getLogger(Filename_Frame.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
         } catch (IllegalAccessException ex) {
-            java.util.logging.Logger.getLogger(FilenameFrame.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+            java.util.logging.Logger.getLogger(Filename_Frame.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
         } catch (javax.swing.UnsupportedLookAndFeelException ex) {
-            java.util.logging.Logger.getLogger(FilenameFrame.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+            java.util.logging.Logger.getLogger(Filename_Frame.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
         }
+        //</editor-fold>
         //</editor-fold>
 
         /* Create and display the form */
         java.awt.EventQueue.invokeLater(new Runnable() {
             public void run() {
-                new FilenameFrame().setVisible(true);
+                new Filename_Frame().setVisible(true);
             }
         });
     }

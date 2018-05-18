@@ -107,7 +107,7 @@ public class ASCII_Char implements Comparator<ASCII_Char>, Comparable<ASCII_Char
     
     /*
      * 
-     *      CSV 
+     *      CSV, h
      * 
      */
     public String toCSVLine() {
@@ -126,11 +126,30 @@ public class ASCII_Char implements Comparator<ASCII_Char>, Comparable<ASCII_Char
                 bytes[i] = Integer.parseInt(tokens[3+i]);
             }
             out.setCodes(bytes);
+            //System.out.print(out.getHLine(false));
             return out;
         } catch (NumberFormatException e) {
             System.out.println("Error in parsing " + line + " to ASCII_Char object");
         }
         return null;
+    }
+    
+    public String getHLine(boolean withComma) {
+        String line;
+        String descriptionText = "";
+        if (description.length() > 0) 
+            descriptionText = " " + description;
+        line = "// " + sign + descriptionText + ", y = " + id + "\n";
+        line += "{ ";
+        for(int i = 0; i < CODES_LENGTH - 1; i++) {
+            line += String.format("x%02X, ", codes[i] & 0xff);
+        }
+        line += String.format("0x%02X ", codes[CODES_LENGTH - 1] & 0xff);
+        if (withComma == true) 
+            line += "},\n";
+        else
+            line += "}\n";
+        return line;
     }
     
     /*
