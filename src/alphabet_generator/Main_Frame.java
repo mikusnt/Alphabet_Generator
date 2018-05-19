@@ -143,7 +143,6 @@ public class Main_Frame extends javax.swing.JFrame {
         deleteAllRows(model);
         
         for (ASCII_Char item : list) {
-            System.out.println(item.getLength());
             Vector row = new Vector();
             row.add(item.getId());
             row.add(item.getSign());

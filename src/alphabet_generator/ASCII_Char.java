@@ -110,19 +110,26 @@ public class ASCII_Char implements Comparator<ASCII_Char>, Comparable<ASCII_Char
      * 
      */
     public String toCSVLine() {
-        return String.valueOf(id) + SEP + String.valueOf(sign) + SEP + description + SEP + Arrays.toString(codes).replace(" ", "").replace("[", "").replace("]", "").replace(",", SEP) + "\n";
+        return String.valueOf(id) + SEP + String.valueOf(sign) + SEP + description.replace(SEP, "_") + SEP + Arrays.toString(codes).replace(" ", "").replace("[", "").replace("]", "").replace(",", SEP) + "\n";
     }
     
     public static ASCII_Char fromCSVLine(String line) {
         
         String[] tokens = line.split(ASCII_Char.SEP);
         try {
+
             ASCII_Char out = new ASCII_Char(Integer.parseInt(tokens[0]));
-            out.setSign(tokens[1]);
-            out.setDescription(tokens[2]);
+            int delta = 0;
+            if (tokens.length == 9) {
+                delta = 1;
+                out.setSign(SEP);
+            } else {
+                out.setSign(tokens[1+delta]);
+            }
+            out.setDescription(tokens[2+delta]);
             int[] bytes = new int[CODES_LENGTH];
             for (int i = 0; i < CODES_LENGTH; i++) {
-                bytes[i] = Integer.parseInt(tokens[3+i]);
+                bytes[i] = Integer.parseInt(tokens[3+i+delta]);
             }
             out.setCodes(bytes);
             //System.out.print(out.getHLine(false));
