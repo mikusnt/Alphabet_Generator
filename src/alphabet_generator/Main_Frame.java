@@ -74,7 +74,7 @@ public class Main_Frame extends javax.swing.JFrame {
                 checkBoxes[i][j].addMouseListener(new MouseListener() {
                     @Override
                     public void mouseClicked(MouseEvent e) {
-                        checkboxClick();
+                        checkboxClick(); 
                     }
 
                     @Override
@@ -129,7 +129,10 @@ public class Main_Frame extends javax.swing.JFrame {
             for(int i = 0; i < 5; i++) {     
                 for(int j = 0; j < 8; j++) {
                     if (checkEnable[list.get(selectedRow).getLength()][i] == true) {
-                        checkBoxes[i][j].setBackground(new Color(240, 240, 240));
+                        if (checkBoxes[i][j].isSelected())
+                            checkBoxes[i][j].setBackground(new Color(0, 0, 0));
+                        else 
+                            checkBoxes[i][j].setBackground(new Color(240, 240, 240));
                     } else 
                         checkBoxes[i][j].setBackground(Color.LIGHT_GRAY);
 
@@ -171,7 +174,7 @@ public class Main_Frame extends javax.swing.JFrame {
     private void checkboxClick() {
         generateNumbers();
         numbersToText();
-        if (jTableMain.getRowCount()>0) {
+        if (jTableMain.getRowCount() > 0) {
             list.get(selectedRow).setCodes(bytes);
             loadASCII_ListElement();
         }
