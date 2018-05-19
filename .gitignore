@@ -27,8 +27,6 @@ build/
 nbbuild/
 dist/
 nbdist/
-.nb-gradle/
-*.csv
-*.c
-*.h
+AVR_files/
+Alphabets/
 settings.conf
