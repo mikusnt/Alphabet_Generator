@@ -28,6 +28,10 @@ import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.ListSelectionModel;
+import javax.swing.event.ChangeEvent;
+import javax.swing.event.ChangeListener;
+import javax.swing.event.ListSelectionEvent;
+import javax.swing.event.ListSelectionListener;
 import javax.swing.table.DefaultTableModel;
 
 /**
@@ -42,6 +46,7 @@ public class Main_Frame extends javax.swing.JFrame {
     private int selectedRow;
     private final String filename;
     private boolean [][] checkEnable;
+    private int actualLength;
 
     /**
      * Creates new form Main_Frame
@@ -52,6 +57,8 @@ public class Main_Frame extends javax.swing.JFrame {
         this.filename = filename;
         File f = new File(filename);
         setTitle("Alphabet Generator - " + f.getName());
+        actualLength = 0;
+        selectedRow = 0;
        
         this.checkBoxes = new JCheckBox[][]{
             { jCheck_00, jCheck_01, jCheck_02, jCheck_03, jCheck_04, jCheck_05, jCheck_06, jCheck_07 },
@@ -71,38 +78,38 @@ public class Main_Frame extends javax.swing.JFrame {
 
         for(int i = 0; i < 5; i++) {
             for(int j = 0; j < 8; j++) {
-                checkBoxes[i][j].addMouseListener(new MouseListener() {
+                checkBoxes[i][j].addChangeListener(new ChangeListener() {
                     @Override
-                    public void mouseClicked(MouseEvent e) {
-                        checkboxClick(); 
-                    }
-
-                    @Override
-                    public void mousePressed(MouseEvent e) {
-                    }
-
-                    @Override
-                    public void mouseReleased(MouseEvent e) {
-                    }
-
-                    @Override
-                    public void mouseEntered(MouseEvent e) {
-                    }
-
-                    @Override
-                    public void mouseExited(MouseEvent e) {
-                    }
+                    public void stateChanged(ChangeEvent e) {
+                        checkboxClick((JCheckBox)e.getSource()); 
+                    }  
                 });
             }
         }
         
+        jTableMain.getSelectionModel().addListSelectionListener(new ListSelectionListener() {
+            @Override
+            public void valueChanged(ListSelectionEvent e) {
+                //System.out.println("Try to rename from " + selectedRow);
+                if (selectedRow != jTableMain.getSelectedRow() && (jTableMain.getSelectedRow() > -1)) {
+                    selectedRow = jTableMain.getSelectedRow();
+                    //System.out.println("rename to " + selectedRow);
+                    refreshElementInList();
+                    tryEnableButtons();
+                    openSelectedItem();  
+                }
+            }
+        });
+        
         this.bytes = new int[5];
-        checkboxClick();
+        checkboxClick(jCheck_00);
         jTableMain.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
-        selectedRow = 0;
 
         list = ASCII_List.readFromCSV(filename);
         refreshList();
+        if (jTableMain.getRowCount() > 0) {
+            jTableMain.setRowSelectionInterval(0, 0);
+        }
 
     }
     
@@ -123,25 +130,40 @@ public class Main_Frame extends javax.swing.JFrame {
             jButtonDelete.setEnabled(false);
         }
     }
-    
-    private void setCheckBoxColor() {
+    private void setCheckBoxesColor() {
         if (jTableMain.getRowCount() > 0) {
-            for(int i = 0; i < 5; i++) {     
+           for(int i = 0; i < 5; i++) {     
                 for(int j = 0; j < 8; j++) {
-                    if (checkEnable[list.get(selectedRow).getLength()][i] == true) {
+                    if (checkEnable[(actualLength)][i] == true) {
                         if (checkBoxes[i][j].isSelected())
                             checkBoxes[i][j].setBackground(new Color(0, 0, 0));
                         else 
                             checkBoxes[i][j].setBackground(new Color(240, 240, 240));
                     } else 
                         checkBoxes[i][j].setBackground(Color.LIGHT_GRAY);
-
                 }
-            }
+            } 
         }
     }
+    private void setCheckBoxColor(JCheckBox box) {
+        //System.out.println("Before: "+ actualLength);
+        if (jTableMain.getRowCount() > 0) {
+            if (list.get(selectedRow).getLength() != actualLength) {
+                actualLength = list.get(selectedRow).getLength();
+                setCheckBoxesColor();
+            } else {
+                
+                if (!box.getBackground().equals(Color.LIGHT_GRAY)) {  
+                    if (box.isSelected()) {
+                        box.setBackground(new Color(0, 0, 0));
+                    } else 
+                        box.setBackground(new Color(240, 240, 240));
+                }
+            } 
+        } 
+    }
     
-    private void loadASCII_List() {
+    private void loadASCIIToList() {
         DefaultTableModel model = (DefaultTableModel)this.jTableMain.getModel();
         deleteAllRows(model);
         
@@ -156,7 +178,7 @@ public class Main_Frame extends javax.swing.JFrame {
         }
     }
     
-    private void loadASCII_ListElement() {
+    private void refreshElementInList() {
         ASCII_Char item = list.get(selectedRow);
         DefaultTableModel model = (DefaultTableModel)this.jTableMain.getModel();
         
@@ -171,14 +193,14 @@ public class Main_Frame extends javax.swing.JFrame {
             model.removeRow(i);
         }
     }
-    private void checkboxClick() {
+    private void checkboxClick(JCheckBox box) {
         generateNumbers();
         numbersToText();
         if (jTableMain.getRowCount() > 0) {
             list.get(selectedRow).setCodes(bytes);
-            loadASCII_ListElement();
+            refreshElementInList();
         }
-        setCheckBoxColor();
+        setCheckBoxColor(box);
     }
     private void generateNumbers() {
         for(int i = 0; i < 5; i++) {
@@ -207,16 +229,8 @@ public class Main_Frame extends javax.swing.JFrame {
     
     private void refreshList() {
         list.saveToCSV(filename);
-        loadASCII_List();
+        loadASCIIToList();
         tryEnableButtons();
-        if (jTableMain.getRowCount() > 0) {
-            try {
-            jTableMain.setRowSelectionInterval(selectedRow, selectedRow);
-            openSelectedItem();
-            } catch (Exception e) {
-                System.out.println(e.toString());
-            }
-        }
     }
     
     private void openSelectedItem() {
@@ -229,7 +243,7 @@ public class Main_Frame extends javax.swing.JFrame {
                 copy >>= 1;
             }  
         }
-        setCheckBoxColor();
+        setCheckBoxesColor();
         numbersToText();
     }
     /**
@@ -320,11 +334,6 @@ public class Main_Frame extends javax.swing.JFrame {
 
             public boolean isCellEditable(int rowIndex, int columnIndex) {
                 return canEdit [columnIndex];
-            }
-        });
-        jTableMain.addMouseListener(new java.awt.event.MouseAdapter() {
-            public void mouseClicked(java.awt.event.MouseEvent evt) {
-                jTableMainMouseClicked(evt);
             }
         });
         jTableMain.addPropertyChangeListener(new java.beans.PropertyChangeListener() {
@@ -644,16 +653,10 @@ public class Main_Frame extends javax.swing.JFrame {
         "Question - clearing window",
         JOptionPane.YES_NO_OPTION) == 0) {
             clearCheckBoxes();
-            checkboxClick();
+            actualLength = 0;
+            checkboxClick(jCheck_00);
         }
     }//GEN-LAST:event_jButtonClearMouseClicked
-
-    private void jTableMainMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jTableMainMouseClicked
-        selectedRow = jTableMain.getSelectedRow();
-        loadASCII_ListElement();
-        tryEnableButtons();
-        openSelectedItem();
-    }//GEN-LAST:event_jTableMainMouseClicked
 
     private void jCheck_06ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jCheck_06ActionPerformed
         // TODO add your handling code here:
@@ -663,11 +666,14 @@ public class Main_Frame extends javax.swing.JFrame {
         //selectedRow = jTableMain.getSelectedRow();
         int newId = list.getNextEmptyId(jTableMain.getSelectedRow());
         try {
-            selectedRow = list.tryAdd(new ASCII_Char(newId));
+            // repair selectedRow
+            //selectedRow = list.tryAdd(new ASCII_Char(newId));
+            int newSelected = list.tryAdd(new ASCII_Char(newId));
+            refreshList();
+            jTableMain.setRowSelectionInterval(newSelected, newSelected);
         } catch (IllegalAccessException e) {
             System.out.println(e.toString());
-        }
-        refreshList();
+        }  
     }//GEN-LAST:event_jButtonAddMouseClicked
 
     private void jButtonDeleteMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jButtonDeleteMouseClicked
@@ -679,7 +685,10 @@ public class Main_Frame extends javax.swing.JFrame {
             JOptionPane.YES_NO_OPTION) == 0) {
                 list.remove(selectedRow);
                 if (selectedRow == jTableMain.getRowCount() - 1)  {
-                    selectedRow--;
+                    System.out.println("aaa");
+                    // repair selectedRow
+                    //selectedRow--;
+                    jTableMain.setRowSelectionInterval(selectedRow - 1, selectedRow - 1);
                 }
                 //jTableMain.setRowSelectionInterval(selectedRow, selectedRow);
                 refreshList();
@@ -708,6 +717,7 @@ public class Main_Frame extends javax.swing.JFrame {
 
     private void jTableMainPropertyChange(java.beans.PropertyChangeEvent evt) {//GEN-FIRST:event_jTableMainPropertyChange
         if (jTableMain.getRowCount() > 0) {
+
             if (list.get(selectedRow).getSign() != ((String)jTableMain.getValueAt(selectedRow, 1))) {
                 //System.out.println("different chars");
                 list.get(selectedRow).setSign(((String)jTableMain.getValueAt(selectedRow, 1)));
@@ -718,28 +728,32 @@ public class Main_Frame extends javax.swing.JFrame {
             }
             if (list.get(selectedRow).getId() != (int)jTableMain.getValueAt(selectedRow, 0)) {
                 int newId = (int)jTableMain.getValueAt(selectedRow, 0);
-                selectedRow = list.renameItemId(selectedRow, newId);
-                
+                int newSelected = list.renameItemId(selectedRow, newId);
                 refreshList();
+                jTableMain.setRowSelectionInterval(newSelected, newSelected);  
             }
-                
-
         }
     }//GEN-LAST:event_jTableMainPropertyChange
 
     private void jButtonUpMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jButtonUpMouseClicked
         if (jButtonUp.isEnabled()) {
             list.swapIndexes(selectedRow, selectedRow - 1);
-            selectedRow = selectedRow - 1;
+            // repair selectedRow
+            //selectedRow = selectedRow - 1;
             refreshList();
+            jTableMain.setRowSelectionInterval(selectedRow - 1, selectedRow - 1);
+            
         }
     }//GEN-LAST:event_jButtonUpMouseClicked
 
     private void jButtonDownMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jButtonDownMouseClicked
         if (jButtonDown.isEnabled()) {
             list.swapIndexes(selectedRow, selectedRow + 1);
-            selectedRow = selectedRow + 1;
+            // repair selectedRow
+            //selectedRow = selectedRow + 1;
             refreshList();
+            jTableMain.setRowSelectionInterval(selectedRow + 1, selectedRow + 1);
+            
         }
     }//GEN-LAST:event_jButtonDownMouseClicked
 
