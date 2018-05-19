@@ -302,7 +302,7 @@ public class Main_Frame extends javax.swing.JFrame {
 
             },
             new String [] {
-                "ID", "Znak", "Opis", "Kropki", "Długość"
+                "ID", "Char", "Description", "Dots", "Length"
             }
         ) {
             Class[] types = new Class [] {
@@ -638,8 +638,8 @@ public class Main_Frame extends javax.swing.JFrame {
     private void jButtonClearMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jButtonClearMouseClicked
         if (JOptionPane.showConfirmDialog(
         this,
-        "Czy na pewno oczyścić okno wartości?",
-        "Pytanie - czyszczenie okna",
+        "Are you sure to clear content window?",
+        "Question - clearing window",
         JOptionPane.YES_NO_OPTION) == 0) {
             clearCheckBoxes();
             checkboxClick();
