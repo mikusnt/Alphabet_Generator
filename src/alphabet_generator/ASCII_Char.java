@@ -29,7 +29,7 @@ import java.util.Comparator;
 public class ASCII_Char implements Comparator<ASCII_Char>, Comparable<ASCII_Char>, Cloneable {
     private static final int CODES_LENGTH = 5;
     public static final String SEP = ";";
-    private char sign;
+    private String sign;
     private int[] codes = new int[CODES_LENGTH];
     private String description;
     private int id;
@@ -43,7 +43,7 @@ public class ASCII_Char implements Comparator<ASCII_Char>, Comparable<ASCII_Char
      */
     public ASCII_Char(int id) {
         this.id = id;
-        this.sign = '?';
+        this.sign = "?";
         this.description = "";
         this.length = 1;
     }
@@ -118,7 +118,7 @@ public class ASCII_Char implements Comparator<ASCII_Char>, Comparable<ASCII_Char
         String[] tokens = line.split(ASCII_Char.SEP);
         try {
             ASCII_Char out = new ASCII_Char(Integer.parseInt(tokens[0]));
-            out.setSign(tokens[1].charAt(0));
+            out.setSign(tokens[1]);
             out.setDescription(tokens[2]);
             int[] bytes = new int[CODES_LENGTH];
             for (int i = 0; i < CODES_LENGTH; i++) {
@@ -137,7 +137,7 @@ public class ASCII_Char implements Comparator<ASCII_Char>, Comparable<ASCII_Char
         String descriptionText = "";
         if (description.length() > 0) 
             descriptionText = " " + description;
-        return prefix + "// " + sign + descriptionText + ", y = " + id;
+        return prefix + "// " + sign + descriptionText + "| y = " + id;
     }
     public String getHComment_Code(boolean withComma, String prefix) {
         String line;
@@ -183,14 +183,14 @@ public class ASCII_Char implements Comparator<ASCII_Char>, Comparable<ASCII_Char
     /**
      * @return the sign
      */
-    public char getSign() {
+    public String getSign() {
         return sign;
     }
 
     /**
      * @param sign the sign to set
      */
-    public void setSign(char sign) {
+    public void setSign(String sign) {
         this.sign = sign;
     }
 

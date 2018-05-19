@@ -230,7 +230,7 @@ public class ASCII_List implements Iterable<ASCII_Char>{
         if (list.size() > 0) {
             for (int i = 0; i < list.size() - 1; i++)
                 out += prefix + list.get(i).getLength() + ", " + list.get(i).getHLineComment("") + "\n";
-            out += prefix + list.get(list.size() - 1).getLength() + " " + list.get(list.size() - 1).getHLineComment("") + "\n";
+            out += prefix + list.get(list.size() - 1).getLength() + "  " + list.get(list.size() - 1).getHLineComment("") + "\n";
         }
         return out;
     }

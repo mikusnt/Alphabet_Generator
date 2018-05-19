@@ -706,9 +706,9 @@ public class Main_Frame extends javax.swing.JFrame {
 
     private void jTableMainPropertyChange(java.beans.PropertyChangeEvent evt) {//GEN-FIRST:event_jTableMainPropertyChange
         if (jTableMain.getRowCount() > 0) {
-            if (list.get(selectedRow).getSign() != ((String)jTableMain.getValueAt(selectedRow, 1)).charAt(0)) {
+            if (list.get(selectedRow).getSign() != ((String)jTableMain.getValueAt(selectedRow, 1))) {
                 //System.out.println("different chars");
-                list.get(selectedRow).setSign(((String)jTableMain.getValueAt(selectedRow, 1)).charAt(0));
+                list.get(selectedRow).setSign(((String)jTableMain.getValueAt(selectedRow, 1)));
             }
             if (list.get(selectedRow).getDescription() != (String)jTableMain.getValueAt(selectedRow, 2)) {
                 //System.out.println("different description");
