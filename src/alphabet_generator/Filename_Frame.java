@@ -51,16 +51,6 @@ public class Filename_Frame extends javax.swing.JFrame {
             jButtonOpen.setEnabled(false);
     }
     
-    private String getDefaultPath() {
-        try {
-        String path = Filename_Frame.class.getProtectionDomain().getCodeSource().getLocation().getPath();
-        return URLDecoder.decode(path, "UTF-8");
-        } catch (UnsupportedEncodingException e) {
-            System.out.println(e.toString());
-            return "";
-        }
-    }
-    
     private void readProperties() {
        try {
          Properties prop = new Properties();
@@ -103,6 +93,7 @@ public class Filename_Frame extends javax.swing.JFrame {
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
         setTitle("Alphabet Generator - alphabet file");
 
+        jTextDir.setEditable(false);
         jTextDir.addCaretListener(new javax.swing.event.CaretListener() {
             public void caretUpdate(javax.swing.event.CaretEvent evt) {
                 jTextDirCaretUpdate(evt);
@@ -156,7 +147,14 @@ public class Filename_Frame extends javax.swing.JFrame {
     private void jButtonSelectMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jButtonSelectMouseClicked
         JFileChooser f = new JFileChooser();
         f.setFileSelectionMode(JFileChooser.FILES_ONLY); 
-        f.setCurrentDirectory(new File(getDefaultPath()));
+        if (jTextDir.getText().length() > 0) {
+            f.setCurrentDirectory(new File(jTextDir.getText()));
+        } else {
+            String path = "Alphabets//"; ;
+            File file = new File(path);
+            file.mkdirs();
+            f.setCurrentDirectory(new File(path));
+        }
         f.showSaveDialog(null);
         if (f.getSelectedFile() != null) {
             jTextDir.setText(f.getSelectedFile().toString());

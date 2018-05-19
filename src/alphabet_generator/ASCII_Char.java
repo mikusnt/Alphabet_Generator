@@ -45,6 +45,7 @@ public class ASCII_Char implements Comparator<ASCII_Char>, Comparable<ASCII_Char
         this.id = id;
         this.sign = '?';
         this.description = "";
+        this.length = 1;
     }
     
     public ASCII_Char(int id, int[] codes) {
@@ -89,9 +90,7 @@ public class ASCII_Char implements Comparator<ASCII_Char>, Comparable<ASCII_Char
             if (codes[3] > 0)
                 length = 3;
             else length = 2;
-        } else if (codes[2] > 0) 
-            length = 1;
-        else length = 0;
+        } else length = 1;
     }
 
     public void setBit(int codeId, int bitId, boolean bitValue) throws ArrayIndexOutOfBoundsException {

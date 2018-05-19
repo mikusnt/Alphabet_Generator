@@ -143,6 +143,7 @@ public class Main_Frame extends javax.swing.JFrame {
         deleteAllRows(model);
         
         for (ASCII_Char item : list) {
+            System.out.println(item.getLength());
             Vector row = new Vector();
             row.add(item.getId());
             row.add(item.getSign());
@@ -687,8 +688,16 @@ public class Main_Frame extends javax.swing.JFrame {
     private void jButtonSaveToFileMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jButtonSaveToFileMouseClicked
         list.saveToCSV(filename);
         AVR_Save avr = new AVR_Save(list);
-        avr.saveHeader();
-        avr.saveC();
+        String paths = "";
+        try {
+            paths = avr.saveHeader()+"\n";
+            paths+=avr.saveC();
+            JOptionPane.showMessageDialog(null, "Created files:\n"+paths);
+        } catch (IOException e) {
+            
+        } finally {
+            
+        }
     }//GEN-LAST:event_jButtonSaveToFileMouseClicked
 
     private void formWindowClosing(java.awt.event.WindowEvent evt) {//GEN-FIRST:event_formWindowClosing

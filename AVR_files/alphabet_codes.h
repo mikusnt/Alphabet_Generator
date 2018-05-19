@@ -1,10 +1,10 @@
-/*
+/**
  * @file alphabet_codes.h
  * @author		Mikolaj Stankowiak <br>
  * 				mik-stan@go2.pl
  * 				
- * $Created: 2018-05-18 $
- * Header file containing byte pixels table of chars and chars byte length in PROGMEM. 
+ * $Created: 2018-05-19 $
+ * Header file containing byte pixels table (Alphabet) of chars and chars byte length in PROGMEM. <br>
  * Created by Alphabet_Generator.
  */
 #ifndef SEQ_ALPHABET_CODES_H_
@@ -14,7 +14,7 @@
 #include <avr/pgmspace.h>
 
 //! number of chars in alphabet table
-#define ALPHABET_SIZE 3
+#define ALPHABET_SIZE 0
 
 //! all alphabet chars and special chars
 extern const uint8_t uiAlphabet[ALPHABET_SIZE][5] PROGMEM;

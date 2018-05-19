@@ -22,6 +22,7 @@ import java.io.IOException;
 import java.io.PrintWriter;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import javax.swing.JOptionPane;
 
 /**
  *
@@ -29,7 +30,7 @@ import java.util.Date;
  */
 public class AVR_Save {
     private final ASCII_List list;
-    private final String headerName = "alphabet_codes.h";
+    private final String headerName = "AVR_files/alphabet_codes.h";
     private final String header = "/**\n" +
         " * @file alphabet_codes.h\n" +
         " * @author\t\tMikolaj Stankowiak <br>\n" +
@@ -54,7 +55,7 @@ public class AVR_Save {
         "extern const uint8_t uiAlLength[ALPHABET_SIZE] PROGMEM;\n" +
         "\n" +
         "#endif /* SEQ_ALPHABET_CODES_H_ */";
-            private final String cName = "alphabet_codes.c";
+            private final String cName = "AVR_files/alphabet_codes.c";
             private final String cPart1 = "#include \"alphabet_codes.h\"\n" +
         "\n" +
         "const uint8_t uiAlphabet[ALPHABET_SIZE][5] PROGMEM = {\n";
@@ -67,26 +68,25 @@ public class AVR_Save {
         this.list = list;
     }
     
-    public void saveHeader() {
+    public String saveHeader() throws IOException {
         File f = new File(headerName);
-        try {
-            f.createNewFile();
-            try (PrintWriter writer = new PrintWriter(f)) {
-                SimpleDateFormat ft = 
-                    new SimpleDateFormat ("yyyy-MM-dd");
-                Date dNow = new Date( );
-                writer.print(String.format(header, ft.format(dNow), list.getSize()));
-                //Desktop dt = Desktop.getDesktop();
-                //dt.open(f.getp);
-            }
-        } catch (IOException e) {
-            System.out.println(e.toString());
+        f.getParentFile().mkdirs();
+        f.createNewFile();
+        try (PrintWriter writer = new PrintWriter(f)) {
+            SimpleDateFormat ft = 
+                new SimpleDateFormat ("yyyy-MM-dd");
+            Date dNow = new Date( );
+            writer.print(String.format(header, ft.format(dNow), list.getSize()));
+            //Desktop dt = Desktop.getDesktop();
+            //dt.open(f.getp);
         }
+        return f.getPath();
     }
-    public void saveC() {
+    public String saveC() throws IOException {
         File f = new File(cName);
+        f.getParentFile().mkdirs();
+        f.createNewFile();
         try {
-            f.createNewFile();
             try (PrintWriter writer = new PrintWriter(f)) {
                 writer.print(cPart1);
                 writer.print(list.getHComment_Codes("\t"));
@@ -99,5 +99,6 @@ public class AVR_Save {
         } catch (IOException e) {
             System.out.println(e.toString());
         }
+        return f.getPath();
     }
 }
