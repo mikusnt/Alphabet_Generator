@@ -71,7 +71,9 @@ public class Filename_Frame extends javax.swing.JFrame {
          InputStream input = new FileInputStream(CONFIG_NAME);
          prop.load(input);
          input.close();
-         jTextDir.setText(prop.getProperty(PATH_KEY));
+         File f = new File(prop.getProperty(PATH_KEY));
+         if (f.exists())
+            jTextDir.setText(prop.getProperty(PATH_KEY));
        } catch (IOException e) {
            System.out.println(e.toString());
        }
@@ -189,6 +191,7 @@ public class Filename_Frame extends javax.swing.JFrame {
         JFileChooser f = new JFileChooser();
         f.setFileSelectionMode(JFileChooser.FILES_ONLY); 
         if (jTextDir.getText().length() > 0) {
+            
             f.setCurrentDirectory(new File(jTextDir.getText()));
         } else {
             String path = "Alphabets//"; ;

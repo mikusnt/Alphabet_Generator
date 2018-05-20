@@ -25,6 +25,10 @@ import java.io.FileOutputStream;
 import java.io.FileReader;
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.nio.charset.Charset;
+import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
@@ -99,8 +103,11 @@ public class ASCII_List implements Iterable<ASCII_Char>{
             throw new NullPointerException("Empty object of ASCII_Char");
         if (isIdInList(e.getId()))
                 throw new IllegalAccessException("Id " + e.getId() + " is in the list");
-        if (list.isEmpty())
+        if (list.isEmpty()) {
+            for (int i = 0; i < e.getId(); i++)
+                list.add(new ASCII_Char(i));
             list.add(e);
+        }
         int firstId = getFirstId();
         int lastId = getLastId();
         if (e.getId() < firstId) {
@@ -171,8 +178,10 @@ public class ASCII_List implements Iterable<ASCII_Char>{
     */
     public void saveToCSV(String filename){
         File f = new File(filename);
-        try (PrintWriter file = new PrintWriter(f)) {
-            file.print(this.toString());
+        try (BufferedWriter file = Files.newBufferedWriter(Paths.get(filename), Charset.forName("windows-1250"))) {
+                file.write(this.toString());
+        //try (PrintWriter file = new PrintWriter(f)) {
+            //file.print(this.toString());
         } catch (Exception e) {
             System.out.println(filename + " not found");       
         }
@@ -181,8 +190,7 @@ public class ASCII_List implements Iterable<ASCII_Char>{
     public static ASCII_List readFromCSV(String filename) {
         ASCII_List newList = new ASCII_List();
         try {
-            FileReader reader = new FileReader(filename);
-            try (BufferedReader file = new BufferedReader(reader)) {
+            try (BufferedReader file = Files.newBufferedReader(Paths.get(filename), Charset.forName("windows-1250"))) {
                 String str;
                 while ((str = file.readLine()) != null) {
                     newList.tryAdd(ASCII_Char.fromCSVLine(str));

@@ -787,7 +787,8 @@ public class Main_Frame extends javax.swing.JFrame {
                 int newSelected = list.renameItemId(selectedRow, newId);
                 list.saveToCSV(filename);
                 refreshList();
-                jTableMain.setRowSelectionInterval(newSelected, newSelected);  
+                jTableMain.setRowSelectionInterval(newSelected, newSelected); 
+                jTableMain.scrollRectToVisible(new Rectangle(jTableMain.getCellRect(newSelected, 0, true)));
             }
         }
     }//GEN-LAST:event_jTableMainPropertyChange
