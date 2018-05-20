@@ -57,6 +57,7 @@ public class Main_Frame extends javax.swing.JFrame {
      */
     public Main_Frame(String filename) {
         initComponents();
+        Filename_Frame.setCenterPosition(this);
         checkListener = new ItemListener() {
             @Override
             public void itemStateChanged(ItemEvent item) {
