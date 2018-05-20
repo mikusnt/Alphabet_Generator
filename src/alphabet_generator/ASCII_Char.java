@@ -35,7 +35,8 @@ public class ASCII_Char implements Comparator<ASCII_Char>, Comparable<ASCII_Char
     private int id;
     private int modifiedDots;
     private int length;
-   
+
+    
     /*
      * 
      *      Constructors 
@@ -50,7 +51,7 @@ public class ASCII_Char implements Comparator<ASCII_Char>, Comparable<ASCII_Char
     
     public ASCII_Char(int id, int[] codes) {
         this(id);
-        setCodes(codes);    
+        setCodes(codes); 
     }
     
     public ASCII_Char(ASCII_Char original) {
@@ -285,6 +286,16 @@ public class ASCII_Char implements Comparator<ASCII_Char>, Comparable<ASCII_Char
      */
     public int getLength() {
         return length;
+    }
+
+    /**
+     * @return the empty
+     */
+    public boolean isEmpty() {
+        if (modifiedDots > 0) {
+            return false;
+        } else 
+            return true;
     }
     
 

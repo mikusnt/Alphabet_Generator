@@ -784,7 +784,19 @@ public class Main_Frame extends javax.swing.JFrame {
             }
             if (list.get(selectedRow).getId() != (int)jTableMain.getValueAt(selectedRow, 0)) {
                 int newId = (int)jTableMain.getValueAt(selectedRow, 0);
-                int newSelected = list.renameItemId(selectedRow, newId);
+                int newSelected = 0;
+                if (list.isIdInList(newId)) {
+                    newSelected = list.tryFindIndex(newId);
+                    list.swapIndexes(selectedRow, newSelected);
+                } else {
+                    try {
+                        newSelected = list.renameItemId(selectedRow, newId);
+                    } catch (IllegalAccessException e) {
+                        newSelected = list.tryFindIndex(newId);
+                        System.out.println(e.toString());
+                        jTableMain.setRowSelectionInterval(newSelected, newSelected);
+                    } 
+                }
                 list.saveToCSV(filename);
                 refreshList();
                 jTableMain.setRowSelectionInterval(newSelected, newSelected); 

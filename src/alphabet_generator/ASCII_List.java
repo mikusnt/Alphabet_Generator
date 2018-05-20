@@ -69,19 +69,15 @@ public class ASCII_List implements Iterable<ASCII_Char>{
         return false;
     }
     
-    public int renameItemId(int index, int newId) {
+    public int renameItemId(int index, int newId) throws IllegalAccessException {
         if (list.get(index).getId() != newId) {
-            try {
-                if (isIdInList(newId)) 
-                    throw new IllegalAccessException("Id " + newId + " is in the list");
-                ASCII_Char copy = new ASCII_Char(list.get(index), newId);
-                list.remove(index);
-                tryAdd(copy);
-            } catch (IllegalAccessException e) {
-                System.out.println(e.toString());
-            }
+            if (isIdInList(newId)) 
+                throw new IllegalAccessException("Id " + newId + " is in the list");
+            ASCII_Char copy = new ASCII_Char(list.get(index), newId);
+            list.set(index, new ASCII_Char(list.get(index).getId()));
+            tryAdd(copy);
         }
-        return tryFindId(newId);
+        return tryFindIndex(newId);
     }
     
     public void swapIndexes(int index0, int index1) {
@@ -101,8 +97,9 @@ public class ASCII_List implements Iterable<ASCII_Char>{
     public int tryAdd(ASCII_Char e) throws IllegalAccessException, NullPointerException {
         if (e == null)
             throw new NullPointerException("Empty object of ASCII_Char");
-        if (isIdInList(e.getId()))
-                throw new IllegalAccessException("Id " + e.getId() + " is in the list");
+        if (isIdInList(e.getId())) {
+            throw new IllegalAccessException("Id " + e.getId() + " is in the list");      
+        }
         if (list.isEmpty()) {
             for (int i = 0; i < e.getId(); i++)
                 list.add(new ASCII_Char(i));
@@ -122,15 +119,15 @@ public class ASCII_List implements Iterable<ASCII_Char>{
         }
         list.sort((ASCII_Char o1, ASCII_Char o2) -> o1.getId() - o2.getId());
         Collections.sort(list);
-        return tryFindId(e.getId());
+        return tryFindIndex(e.getId());
     }
     
-    private int tryFindId(int id) throws ArrayIndexOutOfBoundsException {
+    public int tryFindIndex(int id) {
         for(int i = 0; i < list.size(); i++) {
             if (list.get(i).getId() == id)
                 return i;
         }
-        throw new ArrayIndexOutOfBoundsException("Can't find object in list");
+        return -1;
     }
     
     private void removeLast() {
