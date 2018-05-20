@@ -107,11 +107,21 @@ public class Filename_Frame extends javax.swing.JFrame {
                 jButtonSelectMouseClicked(evt);
             }
         });
+        jButtonSelect.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButtonSelectActionPerformed(evt);
+            }
+        });
 
         jButtonOpen.setText("Open");
         jButtonOpen.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseClicked(java.awt.event.MouseEvent evt) {
                 jButtonOpenMouseClicked(evt);
+            }
+        });
+        jButtonOpen.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButtonOpenActionPerformed(evt);
             }
         });
 
@@ -145,6 +155,23 @@ public class Filename_Frame extends javax.swing.JFrame {
     }// </editor-fold>//GEN-END:initComponents
 
     private void jButtonSelectMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jButtonSelectMouseClicked
+        
+        
+        
+
+        //System.out.println(f.getCurrentDirectory().toString());
+        //System.out.println(f.getSelectedFile().toString());
+    }//GEN-LAST:event_jButtonSelectMouseClicked
+
+    private void jTextDirCaretUpdate(javax.swing.event.CaretEvent evt) {//GEN-FIRST:event_jTextDirCaretUpdate
+        tryEnableOpen();
+    }//GEN-LAST:event_jTextDirCaretUpdate
+
+    private void jButtonOpenMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jButtonOpenMouseClicked
+        
+    }//GEN-LAST:event_jButtonOpenMouseClicked
+
+    private void jButtonSelectActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonSelectActionPerformed
         JFileChooser f = new JFileChooser();
         f.setFileSelectionMode(JFileChooser.FILES_ONLY); 
         if (jTextDir.getText().length() > 0) {
@@ -158,19 +185,10 @@ public class Filename_Frame extends javax.swing.JFrame {
         f.showSaveDialog(null);
         if (f.getSelectedFile() != null) {
             jTextDir.setText(f.getSelectedFile().toString());
-        }
-        
-        
+        }        // TODO add your handling code here:
+    }//GEN-LAST:event_jButtonSelectActionPerformed
 
-        //System.out.println(f.getCurrentDirectory().toString());
-        //System.out.println(f.getSelectedFile().toString());
-    }//GEN-LAST:event_jButtonSelectMouseClicked
-
-    private void jTextDirCaretUpdate(javax.swing.event.CaretEvent evt) {//GEN-FIRST:event_jTextDirCaretUpdate
-        tryEnableOpen();
-    }//GEN-LAST:event_jTextDirCaretUpdate
-
-    private void jButtonOpenMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jButtonOpenMouseClicked
+    private void jButtonOpenActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonOpenActionPerformed
         if (jButtonOpen.isEnabled() && jTextDir.getText().length() > 0) {
             boolean open = false;
             File f = new File(jTextDir.getText());
@@ -196,8 +214,8 @@ public class Filename_Frame extends javax.swing.JFrame {
             } else {
                 JOptionPane.showMessageDialog(null, "Not supported file format", "File verification", JOptionPane.WARNING_MESSAGE);
             }
-        } 
-    }//GEN-LAST:event_jButtonOpenMouseClicked
+        }         // TODO add your handling code here:
+    }//GEN-LAST:event_jButtonOpenActionPerformed
 
     
     /**

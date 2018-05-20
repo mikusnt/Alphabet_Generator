@@ -104,6 +104,40 @@ public class ASCII_Char implements Comparator<ASCII_Char>, Comparable<ASCII_Char
         calculateDotsLength();
     }
     
+    public void shiftBits(int shiftValue) {
+        if (shiftValue > 0) {
+            for (int i = 0; i < CODES_LENGTH; i++) {
+                codes[i] <<= Math.abs(shiftValue);
+            }
+        } else {
+            for (int i = 0; i < CODES_LENGTH; i++) {
+                codes[i] >>= Math.abs(shiftValue);
+            } 
+        }
+        calculateDotsLength();
+    }
+    
+    public void shiftBytes(int shiftValue) {
+       if (shiftValue > 0) {
+            for (int i = CODES_LENGTH - 1; i >= shiftValue; i--) {
+                codes[i] = codes[i - shiftValue];
+            }
+            for (int i = 0; i < shiftValue; i++) {
+                codes[i] = 0;
+            }
+        } else {
+            shiftValue = Math.abs(shiftValue);
+            for (int i = 0; i < CODES_LENGTH - shiftValue; i++) {
+                codes[i] = codes[i + shiftValue];
+            }
+            for (int i = CODES_LENGTH - shiftValue; i < CODES_LENGTH; i++) {
+                codes[i] = 0;
+            } 
+        } 
+        calculateDotsLength();
+
+    }
+    
     /*
      * 
      *      CSV, h
