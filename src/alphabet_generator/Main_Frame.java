@@ -262,6 +262,19 @@ public class Main_Frame extends javax.swing.JFrame {
         setCheckBoxesColor();
         numbersToText();
     }
+    
+    private void addItem(ASCII_Char newItem) {
+        try {
+            // repair selectedRow
+            //selectedRow = list.tryAdd(new ASCII_Char(newId));
+            int newSelected = list.tryAdd(newItem);
+            refreshList();
+            jTableMain.setRowSelectionInterval(newSelected, newSelected);
+            jTableMain.scrollRectToVisible(new Rectangle(jTableMain.getCellRect(newSelected, 0, true)));
+        } catch (IllegalAccessException e) {
+            System.out.println(e.toString());
+        }   
+    }
     /**
      * This method is called from within the constructor to initialize the form.
      * WARNING: Do NOT modify this code. The content of this method is always
@@ -326,6 +339,7 @@ public class Main_Frame extends javax.swing.JFrame {
         jButtonClear = new javax.swing.JButton();
         jButtonBytesDown = new javax.swing.JButton();
         jButtonBytesUp = new javax.swing.JButton();
+        jButtonAddCopy = new javax.swing.JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
         addWindowListener(new java.awt.event.WindowAdapter() {
@@ -435,92 +449,87 @@ public class Main_Frame extends javax.swing.JFrame {
         jCheckPanelLayout.setHorizontalGroup(
             jCheckPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jCheckPanelLayout.createSequentialGroup()
-                .addComponent(jCheck_00)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jCheck_10)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jCheck_20)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jCheck_30)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jCheck_40)
-                .addGap(0, 0, Short.MAX_VALUE))
-            .addGroup(jCheckPanelLayout.createSequentialGroup()
-                .addComponent(jCheck_01)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jCheck_11)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jCheck_21)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jCheck_31)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jCheck_41)
-                .addGap(0, 0, Short.MAX_VALUE))
-            .addGroup(jCheckPanelLayout.createSequentialGroup()
-                .addComponent(jCheck_02)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jCheck_12)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jCheck_22)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jCheck_32)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jCheck_42)
-                .addGap(0, 0, Short.MAX_VALUE))
-            .addGroup(jCheckPanelLayout.createSequentialGroup()
-                .addComponent(jCheck_03)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jCheck_13)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jCheck_23)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jCheck_33)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jCheck_43)
-                .addGap(0, 0, Short.MAX_VALUE))
-            .addGroup(jCheckPanelLayout.createSequentialGroup()
-                .addComponent(jCheck_04)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jCheck_14)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jCheck_24, javax.swing.GroupLayout.PREFERRED_SIZE, 21, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jCheck_34)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jCheck_44)
-                .addGap(0, 0, Short.MAX_VALUE))
-            .addGroup(jCheckPanelLayout.createSequentialGroup()
-                .addComponent(jCheck_05)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jCheck_15)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jCheck_25)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jCheck_35)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jCheck_45)
-                .addGap(0, 0, Short.MAX_VALUE))
-            .addGroup(jCheckPanelLayout.createSequentialGroup()
-                .addComponent(jCheck_06)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jCheck_16)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jCheck_26)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jCheck_36)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jCheck_46)
-                .addGap(0, 0, Short.MAX_VALUE))
-            .addGroup(jCheckPanelLayout.createSequentialGroup()
-                .addComponent(jCheck_07)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jCheck_17)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jCheck_27)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jCheck_37)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jCheck_47)
+                .addGroup(jCheckPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(jCheckPanelLayout.createSequentialGroup()
+                        .addComponent(jCheck_00)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(jCheck_10)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(jCheck_20)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(jCheck_30)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(jCheck_40))
+                    .addGroup(jCheckPanelLayout.createSequentialGroup()
+                        .addComponent(jCheck_01)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(jCheck_11)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(jCheck_21)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(jCheck_31)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(jCheck_41))
+                    .addGroup(jCheckPanelLayout.createSequentialGroup()
+                        .addComponent(jCheck_02)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(jCheck_12)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(jCheck_22)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(jCheck_32)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(jCheck_42))
+                    .addGroup(jCheckPanelLayout.createSequentialGroup()
+                        .addComponent(jCheck_03)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(jCheck_13)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(jCheck_23)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(jCheck_33)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(jCheck_43))
+                    .addGroup(jCheckPanelLayout.createSequentialGroup()
+                        .addComponent(jCheck_04)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(jCheck_14)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(jCheck_24, javax.swing.GroupLayout.PREFERRED_SIZE, 21, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(jCheck_34)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(jCheck_44))
+                    .addGroup(jCheckPanelLayout.createSequentialGroup()
+                        .addComponent(jCheck_05)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(jCheck_15)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(jCheck_25)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(jCheck_35)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(jCheck_45))
+                    .addGroup(jCheckPanelLayout.createSequentialGroup()
+                        .addComponent(jCheck_06)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(jCheck_16)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(jCheck_26)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(jCheck_36)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(jCheck_46))
+                    .addGroup(jCheckPanelLayout.createSequentialGroup()
+                        .addComponent(jCheck_07)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(jCheck_17)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(jCheck_27)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(jCheck_37)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(jCheck_47)))
                 .addGap(0, 0, Short.MAX_VALUE))
         );
         jCheckPanelLayout.setVerticalGroup(
@@ -692,6 +701,13 @@ public class Main_Frame extends javax.swing.JFrame {
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
+        jButtonAddCopy.setText("Add copy");
+        jButtonAddCopy.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButtonAddCopyActionPerformed(evt);
+            }
+        });
+
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
@@ -702,6 +718,8 @@ public class Main_Frame extends javax.swing.JFrame {
                     .addGroup(javax.swing.GroupLayout.Alignment.LEADING, layout.createSequentialGroup()
                         .addComponent(jButtonDelete)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addComponent(jButtonAddCopy)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(jButtonAdd, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                     .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 305, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
@@ -736,7 +754,8 @@ public class Main_Frame extends javax.swing.JFrame {
                     .addComponent(jButtonDelete)
                     .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                         .addComponent(jButtonAdd, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addComponent(jButtonSaveToFile)))
+                        .addComponent(jButtonSaveToFile)
+                        .addComponent(jButtonAddCopy)))
                 .addContainerGap())
         );
 
@@ -818,16 +837,7 @@ public class Main_Frame extends javax.swing.JFrame {
     private void jButtonAddActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonAddActionPerformed
         //selectedRow = jTableMain.getSelectedRow();
         int newId = list.getNextEmptyId(jTableMain.getSelectedRow());
-        try {
-            // repair selectedRow
-            //selectedRow = list.tryAdd(new ASCII_Char(newId));
-            int newSelected = list.tryAdd(new ASCII_Char(newId));
-            refreshList();
-            jTableMain.setRowSelectionInterval(newSelected, newSelected);
-            jTableMain.scrollRectToVisible(new Rectangle(jTableMain.getCellRect(newSelected, 0, true)));
-        } catch (IllegalAccessException e) {
-            System.out.println(e.toString());
-        }          // TODO add your handling code here:
+        addItem(new ASCII_Char(newId));
     }//GEN-LAST:event_jButtonAddActionPerformed
 
     private void jButtonDeleteActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonDeleteActionPerformed
@@ -886,6 +896,11 @@ public class Main_Frame extends javax.swing.JFrame {
         openSigleItem();
     }//GEN-LAST:event_jButtonBitsUpActionPerformed
 
+    private void jButtonAddCopyActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonAddCopyActionPerformed
+        int newId = list.getNextEmptyId(jTableMain.getSelectedRow());
+        addItem(new ASCII_Char(list.get(selectedRow), newId));
+    }//GEN-LAST:event_jButtonAddCopyActionPerformed
+
     /**
      * @param args the command line arguments
      */
@@ -923,6 +938,7 @@ public class Main_Frame extends javax.swing.JFrame {
     
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton jButtonAdd;
+    private javax.swing.JButton jButtonAddCopy;
     private javax.swing.JButton jButtonBitsDown;
     private javax.swing.JButton jButtonBitsUp;
     private javax.swing.JButton jButtonBytesDown;
