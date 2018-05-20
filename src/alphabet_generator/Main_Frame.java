@@ -8,6 +8,7 @@ package alphabet_generator;
 import java.awt.Color;
 import java.awt.Desktop;
 import java.awt.Label;
+import java.awt.Rectangle;
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
 import java.awt.event.MouseEvent;
@@ -47,6 +48,8 @@ public class Main_Frame extends javax.swing.JFrame {
     private final String filename;
     private boolean [][] checkEnable;
     private int actualLength;
+    private ItemListener checkListener;
+    private boolean enableCheckListener = true;
 
     /**
      * Creates new form Main_Frame
@@ -54,11 +57,18 @@ public class Main_Frame extends javax.swing.JFrame {
      */
     public Main_Frame(String filename) {
         initComponents();
+        checkListener = new ItemListener() {
+            @Override
+            public void itemStateChanged(ItemEvent item) {
+                if (enableCheckListener) 
+                    checkboxClick((JCheckBox)item.getSource()); 
+            }  
+        };
         this.filename = filename;
         File f = new File(filename);
         setTitle("Alphabet Generator - " + f.getName());
         actualLength = 0;
-        selectedRow = 0;
+        selectedRow = -1;
        
         this.checkBoxes = new JCheckBox[][]{
             { jCheck_00, jCheck_01, jCheck_02, jCheck_03, jCheck_04, jCheck_05, jCheck_06, jCheck_07 },
@@ -78,12 +88,7 @@ public class Main_Frame extends javax.swing.JFrame {
 
         for(int i = 0; i < 5; i++) {
             for(int j = 0; j < 8; j++) {
-                checkBoxes[i][j].addChangeListener(new ChangeListener() {
-                    @Override
-                    public void stateChanged(ChangeEvent e) {
-                        checkboxClick((JCheckBox)e.getSource()); 
-                    }  
-                });
+                checkBoxes[i][j].addItemListener(checkListener);
             }
         }
         
@@ -94,9 +99,9 @@ public class Main_Frame extends javax.swing.JFrame {
                 if (selectedRow != jTableMain.getSelectedRow() && (jTableMain.getSelectedRow() > -1)) {
                     selectedRow = jTableMain.getSelectedRow();
                     //System.out.println("rename to " + selectedRow);
-                    refreshElementInList();
-                    tryEnableButtons();
-                    openSelectedItem();  
+                    list.saveToCSV(filename);
+                    openSigleItem();
+                    
                 }
             }
         });
@@ -109,10 +114,16 @@ public class Main_Frame extends javax.swing.JFrame {
         refreshList();
         if (jTableMain.getRowCount() > 0) {
             jTableMain.setRowSelectionInterval(0, 0);
+            setCheckBoxesColor();
         }
 
     }
     
+    private void openSigleItem() {
+        refreshElementInList();
+        tryEnableButtons();
+        itemToCheckboxes();  
+    }
     private void tryEnableButtons() {
         if (jTableMain.getRowCount() > 0) {
             jButtonDelete.setEnabled(true);
@@ -132,6 +143,7 @@ public class Main_Frame extends javax.swing.JFrame {
     }
     private void setCheckBoxesColor() {
         if (jTableMain.getRowCount() > 0) {
+           actualLength = list.get(selectedRow).getLength();
            for(int i = 0; i < 5; i++) {     
                 for(int j = 0; j < 8; j++) {
                     if (checkEnable[(actualLength)][i] == true) {
@@ -220,22 +232,24 @@ public class Main_Frame extends javax.swing.JFrame {
     }
     
     private void clearCheckBoxes() {
+        enableCheckListener = false;
         for(int i = 0; i < 5; i++) {
             for(int j = 0; j < 8; j++) {
                 checkBoxes[i][j].setSelected(false);
+
             }
         }
+        enableCheckListener = true; 
     }
     
     private void refreshList() {
-        list.saveToCSV(filename);
         loadASCIIToList();
         tryEnableButtons();
     }
     
-    private void openSelectedItem() {
-        int id = jTableMain.getSelectedRow();
-        bytes = list.get(id).getCodes();
+    private void itemToCheckboxes() {
+        bytes = list.get(selectedRow).getCodes();
+        enableCheckListener = false;
         for(int i = 0; i < 5; i++) {
             int copy = bytes[i];
             for(int j = 0; j < 8; j++) {
@@ -243,6 +257,7 @@ public class Main_Frame extends javax.swing.JFrame {
                 copy >>= 1;
             }  
         }
+        enableCheckListener = true;
         setCheckBoxesColor();
         numbersToText();
     }
@@ -671,6 +686,7 @@ public class Main_Frame extends javax.swing.JFrame {
             int newSelected = list.tryAdd(new ASCII_Char(newId));
             refreshList();
             jTableMain.setRowSelectionInterval(newSelected, newSelected);
+            jTableMain.scrollRectToVisible(new Rectangle(jTableMain.getCellRect(newSelected, 0, true)));
         } catch (IllegalAccessException e) {
             System.out.println(e.toString());
         }  
@@ -684,14 +700,23 @@ public class Main_Frame extends javax.swing.JFrame {
             "Question - removing/clearing char",
             JOptionPane.YES_NO_OPTION) == 0) {
                 list.remove(selectedRow);
-                if (selectedRow == jTableMain.getRowCount() - 1)  {
-                    System.out.println("aaa");
-                    // repair selectedRow
-                    //selectedRow--;
-                    jTableMain.setRowSelectionInterval(selectedRow - 1, selectedRow - 1);
-                }
-                //jTableMain.setRowSelectionInterval(selectedRow, selectedRow);
                 refreshList();
+                //System.out.println(selectedRow);
+                if (list.getSize() == selectedRow) {
+                    jTableMain.setRowSelectionInterval(selectedRow - 1, selectedRow - 1);  
+                } else {
+                    int newSelected = selectedRow;
+                    selectedRow = -1;
+                    jTableMain.setRowSelectionInterval(newSelected, newSelected);  
+                }
+
+                /*System.out.println(selectedRow + " " + jTableMain.getRowCount());
+                if (selectedRow == jTableMain.getRowCount() - 1)  {
+                    System.out.println("last");
+                    jTableMain.setRowSelectionInterval(selectedRow - 1, selectedRow - 1);
+                } else 
+                jTableMain.setRowSelectionInterval(selectedRow, selectedRow);*/
+                
             }
         }
     }//GEN-LAST:event_jButtonDeleteMouseClicked
@@ -716,6 +741,7 @@ public class Main_Frame extends javax.swing.JFrame {
     }//GEN-LAST:event_formWindowClosing
 
     private void jTableMainPropertyChange(java.beans.PropertyChangeEvent evt) {//GEN-FIRST:event_jTableMainPropertyChange
+        //System.out.println("main property change");
         if (jTableMain.getRowCount() > 0) {
 
             if (list.get(selectedRow).getSign() != ((String)jTableMain.getValueAt(selectedRow, 1))) {
@@ -729,6 +755,7 @@ public class Main_Frame extends javax.swing.JFrame {
             if (list.get(selectedRow).getId() != (int)jTableMain.getValueAt(selectedRow, 0)) {
                 int newId = (int)jTableMain.getValueAt(selectedRow, 0);
                 int newSelected = list.renameItemId(selectedRow, newId);
+                list.saveToCSV(filename);
                 refreshList();
                 jTableMain.setRowSelectionInterval(newSelected, newSelected);  
             }
