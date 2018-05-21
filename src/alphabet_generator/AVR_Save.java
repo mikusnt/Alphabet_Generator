@@ -29,7 +29,7 @@ import javax.swing.JOptionPane;
  * @author MS
  */
 public class AVR_Save {
-    private final ASCII_List list;
+    private final Alphabet_List list;
     private final String headerName = "AVR_files/alphabet_codes.h";
     private final String header = "/**\n" +
         " * @file alphabet_codes.h\n" +
@@ -58,16 +58,25 @@ public class AVR_Save {
             private final String cName = "AVR_files/alphabet_codes.c";
             private final String cPart1 = "#include \"alphabet_codes.h\"\n" +
         "\n" +
-        "const uint8_t uiAlphabet[ALPHABET_SIZE][5] PROGMEM = {\n";
+        "const uint8_t uiAlphabet[ALPHABET_SIZE][%d] PROGMEM = {\n";
     private final String cPart2 = "};\n" +
         "\n" +
         "const uint8_t uiAlLength[ALPHABET_SIZE] PROGMEM = {\n";
     private final String cPart3 = "};";
     
-    public AVR_Save(ASCII_List list) {
+    /**
+     *
+     * @param list
+     */
+    public AVR_Save(Alphabet_List list) {
         this.list = list;
     }
     
+    /**
+     *
+     * @return
+     * @throws IOException
+     */
     public String saveHeader() throws IOException {
         File f = new File(headerName);
         f.getParentFile().mkdirs();
@@ -82,16 +91,22 @@ public class AVR_Save {
         }
         return f.getPath();
     }
+
+    /**
+     *
+     * @return
+     * @throws IOException
+     */
     public String saveC() throws IOException {
         File f = new File(cName);
         f.getParentFile().mkdirs();
         f.createNewFile();
         try {
             try (PrintWriter writer = new PrintWriter(f)) {
-                writer.print(cPart1);
-                writer.print(list.getHComment_Codes("\t"));
+                writer.print(String.format(cPart1, Alphabet_Char.MAX_CODES_LENGTH));
+                writer.print(getCCodesTable(list, "\t"));
                 writer.print(cPart2);
-                writer.print(list.getHLengths("\t"));
+                writer.print(getCLengthsTable(list, "\t"));
                 writer.print(cPart3);
                 //Desktop dt = Desktop.getDesktop();
                 //dt.open(f.getp);
@@ -100,5 +115,84 @@ public class AVR_Save {
             System.out.println(e.toString());
         }
         return f.getPath();
+    }
+   
+    
+    /*
+    
+            Generating lines from Alphabet_Char
+    
+    */
+    
+    /**
+     * Generate comment of object to write into C file
+     * @param c object whose comment is generated
+     * @param prefix string before comment
+     * @return comment with description of object
+     */
+    private String getCLineComment(Alphabet_Char c, String prefix) {
+        String descriptionText = "";
+        if (c.getDescription().length() > 0) 
+            descriptionText = " " + c.getDescription();
+        return prefix + "// " + c.getSign() + descriptionText + "| y = " + c.getId();
+    }
+
+    /**
+     *
+     * @param withComma if is true, after close bracket is comma
+     * @param prefix string before comment
+     * @return one index of two-dim table in C
+     */
+    private String getCLineCode(Alphabet_Char c, boolean withComma, String prefix) {
+        String line;
+        line = getCLineComment(c, prefix) + "\n";
+        line += prefix + "{ ";
+        for(int i = 0; i < Alphabet_Char.MAX_CODES_LENGTH - 1; i++) {
+            
+            line += String.format("0x%02X, ", c.getCodes()[i] & 0xff);
+        }
+        line += String.format("0x%02X ", c.getCodes()[Alphabet_Char.MAX_CODES_LENGTH - 1] & 0xff);
+        if (withComma == true) 
+            line += "},";
+        else
+            line += "}";
+        return line;
+    }
+    
+    /*
+    
+            Generating values from lines from Alphabet_Char
+    
+    */
+    
+    /**
+     *
+     * @param prefix
+     * @return
+     */
+    private String getCCodesTable(Alphabet_List list, String prefix) {
+        String out = "";
+            if (list.getSize() > 0) {
+            for (int i = 0; i < list.getSize() - 1; i++) {
+                out += getCLineCode(list.get(i), true, prefix) + "\n";
+            }
+            out += getCLineCode(list.get(list.getSize() - 1), false, prefix) + "\n";
+        }
+        return out;
+    }
+    
+    /**
+     *
+     * @param prefix
+     * @return
+     */
+    private String getCLengthsTable(Alphabet_List list, String prefix) {
+        String out = "";
+        if (list.getSize() > 0) {
+            for (int i = 0; i < list.getSize() - 1; i++)
+                out += prefix + list.get(i).getLength() + ", " + getCLineComment(list.get(i), prefix) + "\n";
+            out += prefix + list.get(list.getSize() - 1).getLength() + "  " + getCLineComment(list.get(list.getSize() - 1), prefix) + "\n";
+        }
+        return out;
     }
 }

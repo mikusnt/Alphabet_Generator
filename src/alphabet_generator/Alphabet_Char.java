@@ -21,19 +21,38 @@ package alphabet_generator;
 
 import java.util.Arrays;
 import java.util.Comparator;
+import javax.swing.JOptionPane;
 
 /**
- * Object represents 5x8 pixels (5 byte) codes to translate to diodes state in Matrix_Clock 
+ * Object represents 5x8 pixels (5 byte) codes to translate to diodes state in Matrix_Clock.
+ * One bit in byte symbolize one diode. Legend of char length:<br>
+ * <div style="font-family:monospace;">
+ * 5: 0..4 |b&nbsp;&nbsp;&nbsp;&nbsp;| <br>
+ * 4: 0..3 |b&nbsp;&nbsp;&nbsp;&nbsp;| <br>
+ * 3: 1..3 |&nbsp;b&nbsp;&nbsp;&nbsp;| <br>
+ * 2: 1..2 |&nbsp;b&nbsp;&nbsp;&nbsp;| <br>
+ * 1: 2..2 |&nbsp;&nbsp;b&nbsp;&nbsp;| <br>
+ * </div>
+ * b is begin of bytes code.
  * @author Mikolaj Stankowiak
  */
-public class ASCII_Char implements Comparator<ASCII_Char>, Comparable<ASCII_Char>, Cloneable {
-    private static final int CODES_LENGTH = 5;
+public class Alphabet_Char implements Comparator<Alphabet_Char>,Comparable<Alphabet_Char>,  Cloneable {
+    /** horizontal size (X dimension) */
+    public static final int MAX_CODES_LENGTH = 5;
+    /** separator between data fields in CSV line */
     public static final String SEP = ";";
+    /** short char name of object */
     private String sign;
-    private int[] codes = new int[CODES_LENGTH];
+    /** byte codes of pixels*/
+    private int[] codes = new int[MAX_CODES_LENGTH]; // byte codes, one byte is Y dim
+    /** optional string of description */
     private String description;
+    /** unique identifier */
     private int id;
+    /** number of bits set to one */
     private int modifiedDots;
+    /** horizontal length of char (between 0 and CODES_LEGHT)
+     @see CODE_LENGTH*/
     private int length;
 
     
@@ -42,19 +61,33 @@ public class ASCII_Char implements Comparator<ASCII_Char>, Comparable<ASCII_Char
      *      Constructors 
      * 
      */
-    public ASCII_Char(int id) {
+
+    /**
+     * Default constructor, initialize object with default data and id
+     * @param id unique identifier
+     */
+    public Alphabet_Char(int id) {
         this.id = id;
         this.sign = "???";
         this.description = "";
         this.length = 1;
     }
     
-    public ASCII_Char(int id, int[] codes) {
+    /**
+     * Initialize object with default data, id and codes
+     * @param id unique identifier
+     * @param codes bytes of pixels
+     */
+    public Alphabet_Char(int id, int[] codes) {
         this(id);
         setCodes(codes); 
     }
     
-    public ASCII_Char(ASCII_Char original) {
+    /**
+     * Copy constructor
+     * @param original object to copy
+     */
+    public Alphabet_Char(Alphabet_Char original) {
         this.sign = original.getSign();
         this.codes = original.getCodes().clone();
         this.description = original.getDescription();
@@ -62,7 +95,12 @@ public class ASCII_Char implements Comparator<ASCII_Char>, Comparable<ASCII_Char
         calculateDotsLength();
     }
     
-    public ASCII_Char(ASCII_Char original, int newId) {
+    /**
+     * Copy constructor, set new id to copied object
+     * @param original object to copy
+     * @param newId to copied object
+     */
+    public Alphabet_Char(Alphabet_Char original, int newId) {
         this(original);
         this.id = newId;
     }
@@ -72,9 +110,13 @@ public class ASCII_Char implements Comparator<ASCII_Char>, Comparable<ASCII_Char
             Main methods
     
     */
+    /** Calculate modifiedDots and length variables, use after modified codes bytes
+     @see modifiedDots
+     @see length
+     @see codes */
     private void calculateDotsLength() {
         modifiedDots = 0;
-        for (int i = 0; i < CODES_LENGTH; i++) {
+        for (int i = 0; i < MAX_CODES_LENGTH; i++) {
             int copy = codes[i];
             for (int j = 0; j < 8; j++) {
                 if ((copy % 2) == 1) {
@@ -94,9 +136,16 @@ public class ASCII_Char implements Comparator<ASCII_Char>, Comparable<ASCII_Char
         } else length = 1;
     }
 
-    public void setBit(int codeId, int bitId, boolean bitValue) throws ArrayIndexOutOfBoundsException {
-        if (codeId >= CODES_LENGTH)
-            throw new ArrayIndexOutOfBoundsException("Wrong number of array index named codeId: " + codeId + " required less than " + CODES_LENGTH);
+    /**
+     * NOT USED
+     * @param codeId
+     * @param bitId
+     * @param bitValue
+     * @throws ArrayIndexOutOfBoundsException
+     */
+    private void setBit(int codeId, int bitId, boolean bitValue) throws ArrayIndexOutOfBoundsException {
+        if (codeId >= MAX_CODES_LENGTH)
+            throw new ArrayIndexOutOfBoundsException("Wrong number of array index named codeId: " + codeId + " required less than " + MAX_CODES_LENGTH);
         if (bitValue) {
             codes[codeId] |= (1 << bitId);
         } else {
@@ -105,22 +154,33 @@ public class ASCII_Char implements Comparator<ASCII_Char>, Comparable<ASCII_Char
         calculateDotsLength();
     }
     
+    /**
+     * SHL and SHR operiations in all single bytes in codes independently. 
+     * Positive value is SHL, negative is SHR.
+     * @see codes
+     * @param shiftValue direction and shift value
+     */
     public void shiftBits(int shiftValue) {
         if (shiftValue > 0) {
-            for (int i = 0; i < CODES_LENGTH; i++) {
+            for (int i = 0; i < MAX_CODES_LENGTH; i++) {
                 codes[i] <<= Math.abs(shiftValue);
             }
         } else {
-            for (int i = 0; i < CODES_LENGTH; i++) {
+            for (int i = 0; i < MAX_CODES_LENGTH; i++) {
                 codes[i] >>= Math.abs(shiftValue);
             } 
         }
         calculateDotsLength();
     }
     
+    /**
+     * SHL and SHR operiations in codes table. One index is like one bit in original shift operations. 
+     * Positive value is SHL, negative is SHR.
+     * @param shiftValue
+     */
     public void shiftBytes(int shiftValue) {
        if (shiftValue > 0) {
-            for (int i = CODES_LENGTH - 1; i >= shiftValue; i--) {
+            for (int i = MAX_CODES_LENGTH - 1; i >= shiftValue; i--) {
                 codes[i] = codes[i - shiftValue];
             }
             for (int i = 0; i < shiftValue; i++) {
@@ -128,42 +188,55 @@ public class ASCII_Char implements Comparator<ASCII_Char>, Comparable<ASCII_Char
             }
         } else {
             shiftValue = Math.abs(shiftValue);
-            for (int i = 0; i < CODES_LENGTH - shiftValue; i++) {
+            for (int i = 0; i < MAX_CODES_LENGTH - shiftValue; i++) {
                 codes[i] = codes[i + shiftValue];
             }
-            for (int i = CODES_LENGTH - shiftValue; i < CODES_LENGTH; i++) {
+            for (int i = MAX_CODES_LENGTH - shiftValue; i < MAX_CODES_LENGTH; i++) {
                 codes[i] = 0;
             } 
         } 
         calculateDotsLength();
-
     }
     
     /*
      * 
-     *      CSV, h
+     *      CSV
      * 
+     */
+
+    /**
+     * Generate CSV line, between data is separator
+     * @see SEP
+     * @return line ready to save to CSV file
      */
     public String toCSVLine() {
         return String.valueOf(id) + SEP + String.valueOf(sign) + SEP + description.replace(SEP, "_") + SEP + Arrays.toString(codes).replace(" ", "").replace("[", "").replace("]", "").replace(",", SEP) + "\n";
     }
     
-    public static ASCII_Char fromCSVLine(String line) {
+    /**
+     * Decode CSV line to object
+     * @param line from CSV file
+     * @return object from file
+     */
+    public static Alphabet_Char fromCSVLine(String line) {
         
-        String[] tokens = line.split(ASCII_Char.SEP);
+        String[] tokens = line.split(Alphabet_Char.SEP);
         try {
 
-            ASCII_Char out = new ASCII_Char(Integer.parseInt(tokens[0]));
+            Alphabet_Char out = new Alphabet_Char(Integer.parseInt(tokens[0]));
             int delta = 0;
-            if (tokens.length == 9) {
-                delta = 1;
-                out.setSign(SEP);
+            if (tokens.length > 8) {
+                delta = tokens.length - 8;
+                String chars = "";
+                for (int i = 0; i < delta; i++)
+                    chars += SEP;
+                out.setSign(chars);
             } else {
                 out.setSign(tokens[1+delta]);
             }
             out.setDescription(tokens[2+delta]);
-            int[] bytes = new int[CODES_LENGTH];
-            for (int i = 0; i < CODES_LENGTH; i++) {
+            int[] bytes = new int[MAX_CODES_LENGTH];
+            for (int i = 0; i < MAX_CODES_LENGTH; i++) {
                 bytes[i] = Integer.parseInt(tokens[3+i+delta]);
             }
             out.setCodes(bytes);
@@ -171,44 +244,27 @@ public class ASCII_Char implements Comparator<ASCII_Char>, Comparable<ASCII_Char
             return out;
         } catch (NumberFormatException e) {
             System.out.println("Error in parsing " + line + " to ASCII_Char object");
+            JOptionPane.showMessageDialog(
+                    null, 
+                    "Error in parsing " + line + " to ASCII_Char object",
+                    "Error message",
+                    JOptionPane.ERROR_MESSAGE);
         }
         return null;
     }
     
-    public String getHLineComment(String prefix) {
-        String descriptionText = "";
-        if (description.length() > 0) 
-            descriptionText = " " + description;
-        return prefix + "// " + sign + descriptionText + "| y = " + id;
-    }
-    public String getHComment_Code(boolean withComma, String prefix) {
-        String line;
-        line = getHLineComment(prefix) + "\n";
-        line += prefix + "{ ";
-        for(int i = 0; i < CODES_LENGTH - 1; i++) {
-            
-            line += String.format("0x%02X, ", codes[i] & 0xff);
-        }
-        line += String.format("0x%02X ", codes[CODES_LENGTH - 1] & 0xff);
-        if (withComma == true) 
-            line += "},";
-        else
-            line += "}";
-        return line;
-    }
-    
     /*
     
-            Compare, clone
+            Compare, clone, toString
     
     */
     @Override
-    public int compareTo(ASCII_Char e) {
+    public int compareTo(Alphabet_Char e) {
         return id - e.getId();
     }
     
     @Override
-    public int compare(ASCII_Char one, ASCII_Char two) {
+    public int compare(Alphabet_Char one, Alphabet_Char two) {
         return one.compareTo(two);
     }
     
@@ -216,6 +272,14 @@ public class ASCII_Char implements Comparator<ASCII_Char>, Comparable<ASCII_Char
     public Object clone() throws CloneNotSupportedException {
         return super.clone();
     }
+    @Override
+    public String toString() {
+        
+        return "Alphabet_Char[Id: " + id + ", Char: " + sign + ", description: " 
+                + description + ", codes: " + Arrays.toString(codes) 
+                + ", modified dots: " + modifiedDots + ", length: " + length + "]";
+    }
+    
     
     /*
     
@@ -247,9 +311,9 @@ public class ASCII_Char implements Comparator<ASCII_Char>, Comparable<ASCII_Char
      * @param codes the codes to set
      */
     public final void setCodes(int[] codes) throws ArrayIndexOutOfBoundsException {
-        if (codes.length == CODES_LENGTH)
+        if (codes.length == MAX_CODES_LENGTH)
             this.codes = codes;
-        else throw new ArrayIndexOutOfBoundsException("Wrong number of array named codes: " + codes.length + " required: "+CODES_LENGTH);
+        else throw new ArrayIndexOutOfBoundsException("Wrong number of array named codes: " + codes.length + " required: "+MAX_CODES_LENGTH);
         calculateDotsLength();
     }
 

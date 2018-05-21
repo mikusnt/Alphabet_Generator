@@ -6,31 +6,18 @@
 package alphabet_generator;
 
 import java.awt.Color;
-import java.awt.Desktop;
-import java.awt.Label;
 import java.awt.Rectangle;
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
-import java.awt.event.MouseEvent;
-import java.awt.event.MouseListener;
 import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
 import java.io.IOException;
-import java.io.OutputStream;
-import java.io.PrintWriter;
-import java.util.Arrays;
-import java.util.Properties;
 import java.util.Vector;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import javax.swing.JCheckBox;
-import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.ListSelectionModel;
-import javax.swing.event.ChangeEvent;
-import javax.swing.event.ChangeListener;
+import java.util.Timer;
+import java.util.TimerTask;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 import javax.swing.table.DefaultTableModel;
@@ -43,13 +30,26 @@ public class Main_Frame extends javax.swing.JFrame {
     private JCheckBox[][] checkBoxes;
     private JLabel[] labels;
     private int bytes[];
-    private ASCII_List list;
+    private Alphabet_List list;
     private int selectedRow;
     private final String filename;
     private boolean [][] checkEnable;
     private int actualLength;
     private ItemListener checkListener;
     private boolean enableCheckListener = true;
+    private boolean modifiedData = false;
+    private final String MODIFIED = "modified";
+    private final String NOT_MODIFIED = "not modified";
+    TimerTask task;
+    Timer timer;
+    
+    class RemindTask extends TimerTask {
+        @Override
+        public void run() {
+            jLabelDyskietka.setVisible(false);
+            timer.cancel(); //Wyłączamy taska
+        }
+    }
 
     /**
      * Creates new form Main_Frame
@@ -57,12 +57,18 @@ public class Main_Frame extends javax.swing.JFrame {
      */
     public Main_Frame(String filename) {
         initComponents();
+        
+        jLabelDyskietka.setVisible(false);
         Filename_Frame.setCenterPosition(this);
+        jStatusBar.setVisible(false);
         checkListener = new ItemListener() {
             @Override
             public void itemStateChanged(ItemEvent item) {
-                if (enableCheckListener) 
+                if (enableCheckListener) {
                     checkboxClick((JCheckBox)item.getSource()); 
+                    modifiedData = true;
+                    jStatusBar.setText(MODIFIED);
+                }
             }  
         };
         this.filename = filename;
@@ -86,6 +92,14 @@ public class Main_Frame extends javax.swing.JFrame {
             { true, true, true, true, false },
             { true, true, true, true, true }
         };
+        
+        task = new TimerTask() {
+        @Override
+            public void run() {
+                jLabelDyskietka.setVisible(false);
+                timer.cancel();
+            }
+        };      
 
         for(int i = 0; i < 5; i++) {
             for(int j = 0; j < 8; j++) {
@@ -100,7 +114,7 @@ public class Main_Frame extends javax.swing.JFrame {
                 if (selectedRow != jTableMain.getSelectedRow() && (jTableMain.getSelectedRow() > -1)) {
                     selectedRow = jTableMain.getSelectedRow();
                     //System.out.println("rename to " + selectedRow);
-                    list.saveToCSV(filename);
+                    trySaveCSV();
                     openSigleItem();
                     
                 }
@@ -110,8 +124,17 @@ public class Main_Frame extends javax.swing.JFrame {
         this.bytes = new int[5];
         checkboxClick(jCheck_00);
         jTableMain.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
-
-        list = ASCII_List.readFromCSV(filename);
+        try {
+            list = Alphabet_List.loadFromCSV(filename);
+        } catch (IOException | IllegalAccessException e) {
+            JOptionPane.showMessageDialog(
+                    null, 
+                    "Error on open Alphabet file",
+                    "Error message",
+                    JOptionPane.ERROR_MESSAGE);
+            setVisible(false);
+            dispose();
+        }
         refreshList();
         if (jTableMain.getRowCount() > 0) {
             jTableMain.setRowSelectionInterval(0, 0);
@@ -119,6 +142,22 @@ public class Main_Frame extends javax.swing.JFrame {
         }
 
     }
+    
+    private void trySaveCSV() {
+        System.out.println(modifiedData);
+        if (modifiedData == true) {
+            try {
+            timer = new Timer();
+            timer.schedule(new RemindTask(), 1000);
+            list.saveToCSV(filename);
+            modifiedData = false;
+            jStatusBar.setText(NOT_MODIFIED);
+            jLabelDyskietka.setVisible(true);
+            } catch (IOException e) {
+                System.out.println(e.toString());
+            }
+        }
+    }   
     
     private void openSigleItem() {
         refreshElementInList();
@@ -180,7 +219,7 @@ public class Main_Frame extends javax.swing.JFrame {
         DefaultTableModel model = (DefaultTableModel)this.jTableMain.getModel();
         deleteAllRows(model);
         
-        for (ASCII_Char item : list) {
+        for (Alphabet_Char item : list) {
             Vector row = new Vector();
             row.add(item.getId());
             row.add(item.getSign());
@@ -192,7 +231,7 @@ public class Main_Frame extends javax.swing.JFrame {
     }
     
     private void refreshElementInList() {
-        ASCII_Char item = list.get(selectedRow);
+        Alphabet_Char item = list.get(selectedRow);
         DefaultTableModel model = (DefaultTableModel)this.jTableMain.getModel();
         
         model.setValueAt(item.getId(), selectedRow, 0);
@@ -201,6 +240,11 @@ public class Main_Frame extends javax.swing.JFrame {
         model.setValueAt(item.getModifiedDots(), selectedRow, 3);    
         model.setValueAt(item.getLength(), selectedRow, 4);
     }
+
+    /**
+     *
+     * @param model
+     */
     public static void deleteAllRows(final DefaultTableModel model) {
         for( int i = model.getRowCount() - 1; i >= 0; i-- ) {
             model.removeRow(i);
@@ -263,10 +307,10 @@ public class Main_Frame extends javax.swing.JFrame {
         numbersToText();
     }
     
-    private void addItem(ASCII_Char newItem) {
+    private void addItem(Alphabet_Char newItem) {
         try {
             // repair selectedRow
-            //selectedRow = list.tryAdd(new ASCII_Char(newId));
+            //selectedRow = list.tryAdd(new Alphabet_Char(newId));
             int newSelected = list.tryAdd(newItem);
             refreshList();
             jTableMain.setRowSelectionInterval(newSelected, newSelected);
@@ -340,6 +384,8 @@ public class Main_Frame extends javax.swing.JFrame {
         jButtonBytesDown = new javax.swing.JButton();
         jButtonBytesUp = new javax.swing.JButton();
         jButtonAddCopy = new javax.swing.JButton();
+        jStatusBar = new javax.swing.JLabel();
+        jLabelDyskietka = new javax.swing.JLabel();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
         addWindowListener(new java.awt.event.WindowAdapter() {
@@ -708,6 +754,19 @@ public class Main_Frame extends javax.swing.JFrame {
             }
         });
 
+        jStatusBar.setBackground(new java.awt.Color(200, 200, 200));
+        jStatusBar.setHorizontalAlignment(javax.swing.SwingConstants.LEFT);
+        jStatusBar.setLabelFor(this);
+        jStatusBar.setText("not modified");
+        jStatusBar.setToolTipText("");
+        jStatusBar.setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
+        jStatusBar.setDebugGraphicsOptions(javax.swing.DebugGraphics.NONE_OPTION);
+
+        jLabelDyskietka.setHorizontalAlignment(javax.swing.SwingConstants.TRAILING);
+        jLabelDyskietka.setIcon(new javax.swing.ImageIcon("C:\\Users\\MS-1\\Desktop\\dyskietka_318-127696.jpg")); // NOI18N
+        jLabelDyskietka.setMaximumSize(new java.awt.Dimension(32, 32));
+        jLabelDyskietka.setOpaque(true);
+
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
@@ -715,24 +774,28 @@ public class Main_Frame extends javax.swing.JFrame {
             .addGroup(layout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
-                    .addGroup(javax.swing.GroupLayout.Alignment.LEADING, layout.createSequentialGroup()
+                    .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 305, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addGroup(layout.createSequentialGroup()
                         .addComponent(jButtonDelete)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(jLabelDyskietka, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(jStatusBar)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                         .addComponent(jButtonAddCopy)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(jButtonAdd, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                    .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 305, javax.swing.GroupLayout.PREFERRED_SIZE))
+                        .addComponent(jButtonAdd, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jButtonDown)
                     .addGroup(layout.createSequentialGroup()
                         .addComponent(jButtonUp)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
-                        .addGap(0, 0, Short.MAX_VALUE)
+                    .addGroup(layout.createSequentialGroup()
+                        .addComponent(jButtonDown)
+                        .addGap(101, 101, 101)
                         .addComponent(jButtonSaveToFile, javax.swing.GroupLayout.PREFERRED_SIZE, 63, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                .addContainerGap())
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -740,23 +803,24 @@ public class Main_Frame extends javax.swing.JFrame {
                 .addContainerGap()
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(layout.createSequentialGroup()
-                        .addGap(0, 0, Short.MAX_VALUE)
-                        .addComponent(jButtonUp)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(jButtonDown))
-                    .addGroup(layout.createSequentialGroup()
-                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 282, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                            .addComponent(jButtonUp)
                             .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                        .addGap(0, 0, Short.MAX_VALUE)))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jButtonDelete)
-                    .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                        .addComponent(jButtonAdd, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addComponent(jButtonSaveToFile)
-                        .addComponent(jButtonAddCopy)))
-                .addContainerGap())
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addComponent(jButtonDown)
+                        .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                    .addGroup(layout.createSequentialGroup()
+                        .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 282, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                                .addComponent(jButtonAdd, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addComponent(jButtonAddCopy)
+                                .addComponent(jButtonSaveToFile)
+                                .addComponent(jStatusBar, javax.swing.GroupLayout.PREFERRED_SIZE, 23, javax.swing.GroupLayout.PREFERRED_SIZE))
+                            .addComponent(jButtonDelete)
+                            .addComponent(jLabelDyskietka, javax.swing.GroupLayout.PREFERRED_SIZE, 23, javax.swing.GroupLayout.PREFERRED_SIZE))
+                        .addGap(0, 11, Short.MAX_VALUE))))
         );
 
         pack();
@@ -767,13 +831,14 @@ public class Main_Frame extends javax.swing.JFrame {
     }//GEN-LAST:event_jCheck_06ActionPerformed
 
     private void formWindowClosing(java.awt.event.WindowEvent evt) {//GEN-FIRST:event_formWindowClosing
-        list.saveToCSV(filename);
+        trySaveCSV();
     }//GEN-LAST:event_formWindowClosing
 
     private void jTableMainPropertyChange(java.beans.PropertyChangeEvent evt) {//GEN-FIRST:event_jTableMainPropertyChange
         //System.out.println("main property change");
         if (jTableMain.getRowCount() > 0) {
-
+            modifiedData = true;
+            jStatusBar.setText(MODIFIED);
             if (list.get(selectedRow).getSign() != ((String)jTableMain.getValueAt(selectedRow, 1))) {
                 //System.out.println("different chars");
                 list.get(selectedRow).setSign(((String)jTableMain.getValueAt(selectedRow, 1)));
@@ -797,7 +862,7 @@ public class Main_Frame extends javax.swing.JFrame {
                         jTableMain.setRowSelectionInterval(newSelected, newSelected);
                     } 
                 }
-                list.saveToCSV(filename);
+                trySaveCSV();
                 refreshList();
                 jTableMain.setRowSelectionInterval(newSelected, newSelected); 
                 jTableMain.scrollRectToVisible(new Rectangle(jTableMain.getCellRect(newSelected, 0, true)));
@@ -806,8 +871,13 @@ public class Main_Frame extends javax.swing.JFrame {
     }//GEN-LAST:event_jTableMainPropertyChange
 
     private void jButtonBytesDownActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonBytesDownActionPerformed
+        if (list.get(selectedRow).getModifiedDots() > 0) {
+            modifiedData = true;
+            jStatusBar.setText(MODIFIED);
+        }
         list.get(selectedRow).shiftBytes(-1);
         openSigleItem();
+        
     }//GEN-LAST:event_jButtonBytesDownActionPerformed
 
     private void jButtonUpActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonUpActionPerformed
@@ -833,7 +903,7 @@ public class Main_Frame extends javax.swing.JFrame {
     }//GEN-LAST:event_jButtonDownActionPerformed
 
     private void jButtonSaveToFileActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonSaveToFileActionPerformed
-        list.saveToCSV(filename);
+        trySaveCSV();
         AVR_Save avr = new AVR_Save(list);
         String paths = "";
         try {
@@ -852,7 +922,9 @@ public class Main_Frame extends javax.swing.JFrame {
     private void jButtonAddActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonAddActionPerformed
         //selectedRow = jTableMain.getSelectedRow();
         int newId = list.getNextEmptyId(jTableMain.getSelectedRow());
-        addItem(new ASCII_Char(newId));
+        addItem(new Alphabet_Char(newId));
+        modifiedData = true;
+        jStatusBar.setText(MODIFIED);
     }//GEN-LAST:event_jButtonAddActionPerformed
 
     private void jButtonDeleteActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonDeleteActionPerformed
@@ -862,7 +934,17 @@ public class Main_Frame extends javax.swing.JFrame {
             "Are you sure to removing/clearing '" + list.get(selectedRow).getSign()+ "' char?",
             "Question - removing/clearing char",
             JOptionPane.YES_NO_OPTION) == 0) {
-                list.remove(selectedRow);
+                try {
+                    list.remove(selectedRow);
+                    modifiedData = true;
+                    jStatusBar.setText(MODIFIED);
+                } catch (IllegalAccessException e) {
+                   JOptionPane.showMessageDialog(
+                           null, 
+                           "Error on removing " + selectedRow + " from list",
+                           "Error message",
+                           JOptionPane.ERROR_MESSAGE);
+                }
                 refreshList();
                 //System.out.println(selectedRow);
                 if (list.getSize() == selectedRow) {
@@ -893,10 +975,16 @@ public class Main_Frame extends javax.swing.JFrame {
             clearCheckBoxes();
             actualLength = 0;
             checkboxClick(jCheck_00);
-        }        // TODO add your handling code here:
+            modifiedData = true;
+            jStatusBar.setText(MODIFIED);
+        } 
     }//GEN-LAST:event_jButtonClearActionPerformed
 
     private void jButtonBytesUpActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonBytesUpActionPerformed
+        if (list.get(selectedRow).getModifiedDots() > 0) {
+            modifiedData = true;
+            jStatusBar.setText(MODIFIED);
+        }
         list.get(selectedRow).shiftBytes(1);
         openSigleItem();
     }//GEN-LAST:event_jButtonBytesUpActionPerformed
@@ -904,16 +992,22 @@ public class Main_Frame extends javax.swing.JFrame {
     private void jButtonBitsDownActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonBitsDownActionPerformed
         list.get(selectedRow).shiftBits(-1);
         openSigleItem();
+        modifiedData = true;
+        jStatusBar.setText(MODIFIED);
     }//GEN-LAST:event_jButtonBitsDownActionPerformed
 
     private void jButtonBitsUpActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonBitsUpActionPerformed
         list.get(selectedRow).shiftBits(1);
         openSigleItem();
+        modifiedData = true;
+        jStatusBar.setText(MODIFIED);
     }//GEN-LAST:event_jButtonBitsUpActionPerformed
 
     private void jButtonAddCopyActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonAddCopyActionPerformed
         int newId = list.getNextEmptyId(jTableMain.getSelectedRow());
-        addItem(new ASCII_Char(list.get(selectedRow), newId));
+        addItem(new Alphabet_Char(list.get(selectedRow), newId));
+        modifiedData = true;
+        jStatusBar.setText(MODIFIED);
     }//GEN-LAST:event_jButtonAddCopyActionPerformed
 
     /**
@@ -1004,9 +1098,11 @@ public class Main_Frame extends javax.swing.JFrame {
     private javax.swing.JCheckBox jCheck_45;
     private javax.swing.JCheckBox jCheck_46;
     private javax.swing.JCheckBox jCheck_47;
+    private javax.swing.JLabel jLabelDyskietka;
     private javax.swing.JLabel jLabelNumbers;
     private javax.swing.JPanel jPanel1;
     private javax.swing.JScrollPane jScrollPane1;
+    private javax.swing.JLabel jStatusBar;
     private javax.swing.JTable jTableMain;
     // End of variables declaration//GEN-END:variables
 }

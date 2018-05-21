@@ -47,6 +47,10 @@ public class Filename_Frame extends javax.swing.JFrame {
         tryEnableOpen();
     }
     
+    /**
+     *
+     * @param frame
+     */
     public static void setCenterPosition(javax.swing.JFrame frame) {
         Dimension dim = Toolkit.getDefaultToolkit().getScreenSize();
 
@@ -210,7 +214,7 @@ public class Filename_Frame extends javax.swing.JFrame {
             boolean open = false;
             File f = new File(jTextDir.getText());
             if (f.exists()) {
-                if(ASCII_List.verifyCSV(jTextDir.getText())) {
+                if(Alphabet_List.verifyCSV(jTextDir.getText())) {
                     open = true;
                 }
             } else {
@@ -229,7 +233,11 @@ public class Filename_Frame extends javax.swing.JFrame {
                 setVisible(false);
                 dispose();
             } else {
-                JOptionPane.showMessageDialog(null, "Not supported file format", "File verification", JOptionPane.WARNING_MESSAGE);
+                JOptionPane.showMessageDialog(
+                        null, 
+                        "Not supported file format", 
+                        "File verification", 
+                        JOptionPane.WARNING_MESSAGE);
             }
         }         // TODO add your handling code here:
     }//GEN-LAST:event_jButtonOpenActionPerformed

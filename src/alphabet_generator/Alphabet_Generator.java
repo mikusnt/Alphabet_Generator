@@ -23,11 +23,12 @@ public class Alphabet_Generator {
             System.out.println(info.getClassName());
         }*/
         try {
-        UIManager.setLookAndFeel("com.sun.java.swing.plaf.windows.WindowsLookAndFeel");
-        } catch (ClassNotFoundException | IllegalAccessException | InstantiationException | UnsupportedLookAndFeelException e) {
-            System.out.println(e.toString());
+            UIManager.setLookAndFeel("com.sun.java.swing.plaf.windows.WindowsLookAndFeel");
+            } catch (ClassNotFoundException | IllegalAccessException | InstantiationException | UnsupportedLookAndFeelException e) {
+                System.out.println(e.toString());
         }
-        //System.out.println(lista.toString());
+        //Alphabet_Char first = new Alphabet_Char(5, new int[]{ 0, 1, 2, 3, 4});
+        //System.out.println(first.toString());
         //Main_Frame frame = new Main_Frame();
         //frame.setVisible(true);
         Filename_Frame file = new Filename_Frame();
