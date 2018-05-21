@@ -841,10 +841,12 @@ public class Main_Frame extends javax.swing.JFrame {
             paths+=avr.saveC();
             JOptionPane.showMessageDialog(null, "Created files:\n"+paths);
         } catch (IOException e) {
-            
-        } finally {
-            
-        }        // TODO add your handling code here:
+            JOptionPane.showMessageDialog(
+                    null, 
+                    "Erron on tryiny create files:\n" + e.toString(),
+                    "Error",
+                    JOptionPane.ERROR_MESSAGE);
+        } 
     }//GEN-LAST:event_jButtonSaveToFileActionPerformed
 
     private void jButtonAddActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonAddActionPerformed
