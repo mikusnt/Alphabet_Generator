@@ -125,11 +125,6 @@ public class Filename_Frame extends javax.swing.JFrame {
 
         jButtonSelect.setText("...");
         jButtonSelect.setMargin(new java.awt.Insets(2, 2, 2, 2));
-        jButtonSelect.addMouseListener(new java.awt.event.MouseAdapter() {
-            public void mouseClicked(java.awt.event.MouseEvent evt) {
-                jButtonSelectMouseClicked(evt);
-            }
-        });
         jButtonSelect.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 jButtonSelectActionPerformed(evt);
@@ -137,11 +132,6 @@ public class Filename_Frame extends javax.swing.JFrame {
         });
 
         jButtonOpen.setText("Open");
-        jButtonOpen.addMouseListener(new java.awt.event.MouseAdapter() {
-            public void mouseClicked(java.awt.event.MouseEvent evt) {
-                jButtonOpenMouseClicked(evt);
-            }
-        });
         jButtonOpen.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 jButtonOpenActionPerformed(evt);
@@ -177,22 +167,9 @@ public class Filename_Frame extends javax.swing.JFrame {
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
-    private void jButtonSelectMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jButtonSelectMouseClicked
-        
-        
-        
-
-        //System.out.println(f.getCurrentDirectory().toString());
-        //System.out.println(f.getSelectedFile().toString());
-    }//GEN-LAST:event_jButtonSelectMouseClicked
-
     private void jTextDirCaretUpdate(javax.swing.event.CaretEvent evt) {//GEN-FIRST:event_jTextDirCaretUpdate
         tryEnableOpen();
     }//GEN-LAST:event_jTextDirCaretUpdate
-
-    private void jButtonOpenMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jButtonOpenMouseClicked
-        
-    }//GEN-LAST:event_jButtonOpenMouseClicked
 
     private void jButtonSelectActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonSelectActionPerformed
         JFileChooser f = new JFileChooser();

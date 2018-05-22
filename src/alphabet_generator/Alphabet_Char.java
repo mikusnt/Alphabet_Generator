@@ -65,8 +65,11 @@ public class Alphabet_Char implements Comparator<Alphabet_Char>,Comparable<Alpha
     /**
      * Default constructor, initialize object with default data and id
      * @param id unique identifier
+     * @throws IllegalArgumentException when id is less than zero
      */
-    public Alphabet_Char(int id) {
+    public Alphabet_Char(int id) throws IllegalArgumentException {
+        if (id < 0) 
+            throw new IllegalArgumentException("Id must be greater or equal zero");
         this.id = id;
         this.sign = "_empty";
         this.description = "";
@@ -77,8 +80,9 @@ public class Alphabet_Char implements Comparator<Alphabet_Char>,Comparable<Alpha
      * Initialize object with default data, id and codes
      * @param id unique identifier
      * @param codes bytes of pixels
+     * @throws IllegalArgumentException when id is less than zero
      */
-    public Alphabet_Char(int id, int[] codes) {
+    public Alphabet_Char(int id, int[] codes) throws IllegalArgumentException {
         this(id);
         setCodes(codes); 
     }
@@ -99,9 +103,12 @@ public class Alphabet_Char implements Comparator<Alphabet_Char>,Comparable<Alpha
      * Copy constructor, set new id to copied object
      * @param original object to copy
      * @param newId to copied object
+     * @throws IllegalArgumentException when id is less than zero
      */
-    public Alphabet_Char(Alphabet_Char original, int newId) {
+    public Alphabet_Char(Alphabet_Char original, int newId) throws IllegalArgumentException {
         this(original);
+         if (id < 0) 
+            throw new IllegalArgumentException("Id must be greater or equal zero");
         this.id = newId;
     }
     

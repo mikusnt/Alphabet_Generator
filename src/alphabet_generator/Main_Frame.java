@@ -27,22 +27,34 @@ import javax.swing.table.DefaultTableModel;
  * @author MS-1
  */
 public class Main_Frame extends javax.swing.JFrame {
+    /** Table of checkboxes to encode bits data */
     private JCheckBox[][] checkBoxes;
-    private JLabel[] labels;
+    /** Table of bytes from selected checkboxes */
     private int bytes[];
+    /** Full list of Alphabet_Char objects */
     private Alphabet_List list;
+    /** Altual selected row in jTableMain, renamed only by vakueChanged listener */
     private int selectedRow;
+    /** Filename of CSV file with alphabet data*/
     private final String filename;
+    /** Table of enable flags in X dimension, first value is length of char*/
     private boolean [][] checkEnable;
+    /** Actual length (size in X dim) of actual char */
     private int actualLength;
+    /** Checkbox listener*/
     private ItemListener checkListener;
+    /** Flag of Enable checkboxes listenef*/
     private boolean enableCheckListener = true;
+    /** Flag of modified data in actual element in list*/
     private boolean modifiedData = false;
+    /** Information text when modified data */
     private final String MODIFIED = "modified";
+    /** Unformation text when not modified data, after save, before rename data*/
     private final String NOT_MODIFIED = "not modified";
-    TimerTask task;
+    /** Timer to disable Save picture after save */
     Timer timer;
     
+    /** Event when timer end counting */
     class RemindTask extends TimerTask {
         @Override
         public void run() {
@@ -53,29 +65,17 @@ public class Main_Frame extends javax.swing.JFrame {
 
     /**
      * Creates new form Main_Frame
-     * @param   filename    path of datafile
+     * @param   filename    path of CSV elphabet file
      */
     public Main_Frame(String filename) {
         initComponents();
-        
+        // disable visible
         jLabelDyskietka.setVisible(false);
-        Filename_Frame.setCenterPosition(this);
         jStatusBar.setVisible(false);
-        checkListener = new ItemListener() {
-            @Override
-            public void itemStateChanged(ItemEvent item) {
-                if (enableCheckListener) {
-                    checkboxClick((JCheckBox)item.getSource()); 
-                    modifiedData = true;
-                    jStatusBar.setText(MODIFIED);
-                }
-            }  
-        };
         this.filename = filename;
         File f = new File(filename);
-        setTitle("Alphabet Generator - " + f.getName());
-        actualLength = 0;
-        selectedRow = -1;
+        Filename_Frame.setCenterPosition(this);
+        setTitle("Alphabet Generator - " + f.getName());    
        
         this.checkBoxes = new JCheckBox[][]{
             { jCheck_00, jCheck_01, jCheck_02, jCheck_03, jCheck_04, jCheck_05, jCheck_06, jCheck_07 },
@@ -91,19 +91,17 @@ public class Main_Frame extends javax.swing.JFrame {
             { false, true, true, true, false },
             { true, true, true, true, false },
             { true, true, true, true, true }
-        };
-        
-        task = new TimerTask() {
-        @Override
-            public void run() {
-                jLabelDyskietka.setVisible(false);
-                timer.cancel();
-            }
-        };      
+        };     
 
         for(int i = 0; i < 5; i++) {
             for(int j = 0; j < 8; j++) {
-                checkBoxes[i][j].addItemListener(checkListener);
+                checkBoxes[i][j].addItemListener((ItemEvent e) -> {
+                    if (enableCheckListener) {
+                        checkboxClick((JCheckBox)e.getSource());
+                        modifiedData = true;
+                        jStatusBar.setText(MODIFIED);                      
+                    }
+                });
             }
         }
         
@@ -120,10 +118,12 @@ public class Main_Frame extends javax.swing.JFrame {
                 }
             }
         });
-        
+        // to load all data from new item
+        actualLength = 0;
+        selectedRow = -1;
         this.bytes = new int[5];
-        checkboxClick(jCheck_00);
         jTableMain.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+        
         try {
             list = Alphabet_List.loadFromCSV(filename);
         } catch (IOException | IllegalAccessException e) {
@@ -142,7 +142,7 @@ public class Main_Frame extends javax.swing.JFrame {
         }
 
     }
-    
+    /** Save list to CSV file when modifiedData flag is enable.*/
     private void trySaveCSV() {
         //System.out.println(modifiedData);
         if (modifiedData == true) {
@@ -159,11 +159,14 @@ public class Main_Frame extends javax.swing.JFrame {
         }
     }   
     
-    private void openSigleItem() {
-        refreshElementInList();
-        tryEnableButtons();
-        itemToCheckboxes();  
-    }
+    
+     /*
+    
+            Checkboxes
+    
+    */
+    
+    /** Enable buttons when conditions are good */
     private void tryEnableButtons() {
         if (jTableMain.getRowCount() > 0) {
             jButtonDelete.setEnabled(true);
@@ -181,6 +184,9 @@ public class Main_Frame extends javax.swing.JFrame {
             jButtonDelete.setEnabled(false);
         }
     }
+
+    /** Set all checkboxes color from information about selected element in list.
+      Set actualLength variable.*/
     private void setCheckBoxesColor() {
         if (jTableMain.getRowCount() > 0) {
            actualLength = list.get(selectedRow).getLength();
@@ -197,6 +203,9 @@ public class Main_Frame extends javax.swing.JFrame {
             } 
         }
     }
+    
+    /** When length of selected item from list equals actualLength set 
+     color of checkbox in argument, set color in all checkboxes otherwise*/
     private void setCheckBoxColor(JCheckBox box) {
         //System.out.println("Before: "+ actualLength);
         if (jTableMain.getRowCount() > 0) {
@@ -215,41 +224,7 @@ public class Main_Frame extends javax.swing.JFrame {
         } 
     }
     
-    private void loadASCIIToList() {
-        DefaultTableModel model = (DefaultTableModel)this.jTableMain.getModel();
-        deleteAllRows(model);
-        
-        for (Alphabet_Char item : list) {
-            Vector row = new Vector();
-            row.add(item.getId());
-            row.add(item.getSign());
-            row.add(item.getDescription());
-            row.add(item.getModifiedDots());
-            row.add(item.getLength());
-            model.addRow(row);
-        }
-    }
-    
-    private void refreshElementInList() {
-        Alphabet_Char item = list.get(selectedRow);
-        DefaultTableModel model = (DefaultTableModel)this.jTableMain.getModel();
-        
-        model.setValueAt(item.getId(), selectedRow, 0);
-        model.setValueAt(String.valueOf(item.getSign()), selectedRow, 1);
-        model.setValueAt(item.getDescription(), selectedRow, 2);
-        model.setValueAt(item.getModifiedDots(), selectedRow, 3);    
-        model.setValueAt(item.getLength(), selectedRow, 4);
-    }
-
-    /**
-     * // clear model of fFrame
-     * @param model to clear
-     */
-    public static void deleteAllRows(final DefaultTableModel model) {
-        for( int i = model.getRowCount() - 1; i >= 0; i-- ) {
-            model.removeRow(i);
-        }
-    }
+    /** Group of actions to rename data of click checkbox in argument */
     private void checkboxClick(JCheckBox box) {
         generateNumbers();
         numbersToText();
@@ -259,6 +234,8 @@ public class Main_Frame extends javax.swing.JFrame {
         }
         setCheckBoxColor(box);
     }
+    
+    /** Generate numbers to bytes table from checkboxes (table of bits) */
     private void generateNumbers() {
         for(int i = 0; i < 5; i++) {
             bytes[i] = 0;
@@ -268,6 +245,8 @@ public class Main_Frame extends javax.swing.JFrame {
             }
         }
     }
+    
+    /** Load numbers from bytes to jLabelNumbers */
     private void numbersToText() {
         String str = "";
         for(int i = 0; i < 5; i++) {
@@ -276,6 +255,7 @@ public class Main_Frame extends javax.swing.JFrame {
         jLabelNumbers.setText(str);
     }
     
+    /** Set all checkboxes to unchecked with disable checkLIstener */
     private void clearCheckBoxes() {
         enableCheckListener = false;
         for(int i = 0; i < 5; i++) {
@@ -287,11 +267,7 @@ public class Main_Frame extends javax.swing.JFrame {
         enableCheckListener = true; 
     }
     
-    private void refreshList() {
-        loadASCIIToList();
-        tryEnableButtons();
-    }
-    
+    /** Load selected item data to all checkboxes with disable checkboxListener*/
     private void itemToCheckboxes() {
         bytes = list.get(selectedRow).getCodes();
         enableCheckListener = false;
@@ -307,7 +283,67 @@ public class Main_Frame extends javax.swing.JFrame {
         numbersToText();
     }
     
-    private void addItem(Alphabet_Char newItem) {
+    /*
+    
+            Main Table
+    
+    */
+    
+    /** Open selected item from selected row in jTable to all required fields */
+    private void openSigleItem() {
+        refreshElementInList();
+        tryEnableButtons();
+        itemToCheckboxes();  
+    }
+    
+    /** Load new item from list to jTable */
+    private void refreshElementInList() {
+        Alphabet_Char item = list.get(selectedRow);
+        DefaultTableModel model = (DefaultTableModel)this.jTableMain.getModel();
+        
+        model.setValueAt(item.getId(), selectedRow, 0);
+        model.setValueAt(String.valueOf(item.getSign()), selectedRow, 1);
+        model.setValueAt(item.getDescription(), selectedRow, 2);
+        model.setValueAt(item.getModifiedDots(), selectedRow, 3);    
+        model.setValueAt(item.getLength(), selectedRow, 4);
+    }
+
+    /**
+     * // clear model of jFrame
+     * @param model to clear
+     */
+    public static void deleteAllRows(final DefaultTableModel model) {
+        for( int i = model.getRowCount() - 1; i >= 0; i-- ) {
+            model.removeRow(i);
+        }
+    }
+    
+    /** Load all items from list to jTable */
+    private void loadListToTable() {
+        DefaultTableModel model = (DefaultTableModel)this.jTableMain.getModel();
+        deleteAllRows(model);
+        
+        for (Alphabet_Char item : list) {
+            Vector row = new Vector();
+            row.add(item.getId());
+            row.add(item.getSign());
+            row.add(item.getDescription());
+            row.add(item.getModifiedDots());
+            row.add(item.getLength());
+            model.addRow(row);
+        }
+    }
+    
+    /** Load all items from list to jTable and enable buttons from selectedRow
+     information */
+    private void refreshList() {
+        loadListToTable();
+        tryEnableButtons();
+    }
+    
+    
+    /** Group of actions of add new item to list and jTable */
+    private void addItemToListTable(Alphabet_Char newItem) {
         try {
             // repair selectedRow
             //selectedRow = list.tryAdd(new Alphabet_Char(newId));
@@ -922,7 +958,7 @@ public class Main_Frame extends javax.swing.JFrame {
     private void jButtonAddActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonAddActionPerformed
         //selectedRow = jTableMain.getSelectedRow();
         int newId = list.getNextEmptyId(jTableMain.getSelectedRow());
-        addItem(new Alphabet_Char(newId));
+        addItemToListTable(new Alphabet_Char(newId));
         modifiedData = true;
         jStatusBar.setText(MODIFIED);
     }//GEN-LAST:event_jButtonAddActionPerformed
@@ -1005,7 +1041,7 @@ public class Main_Frame extends javax.swing.JFrame {
 
     private void jButtonAddCopyActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonAddCopyActionPerformed
         int newId = list.getNextEmptyId(jTableMain.getSelectedRow());
-        addItem(new Alphabet_Char(list.get(selectedRow), newId));
+        addItemToListTable(new Alphabet_Char(list.get(selectedRow), newId));
         modifiedData = true;
         jStatusBar.setText(MODIFIED);
     }//GEN-LAST:event_jButtonAddCopyActionPerformed
