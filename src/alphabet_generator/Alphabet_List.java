@@ -94,8 +94,8 @@ public class Alphabet_List implements Iterable<Alphabet_Char>{
     
     /**
      * Removes object with specific index, throws exception when index isn't 
-     * on the list. When removed index isn't on the first or on the last position
-     * object position is reset to default
+     * on the list. When removed index isn't on the last position
+     * object position is reset to default.
      * @param index to remove
      * @throws java.lang.IllegalAccessException when index isn't on the list
      */
@@ -104,9 +104,6 @@ public class Alphabet_List implements Iterable<Alphabet_Char>{
             if (list.size() > 0) {
                 if (list.get(index).getId() == getLastId()) {
                     removeLast();
-                } else if (list.get(index).getId() == getFirstId()) {
-                    removeFirst();
-
                 } else {
                     list.set(index, new Alphabet_Char(list.get(index).getId()));
                 }

@@ -13,20 +13,18 @@ import java.io.File;
 import java.io.IOException;
 import java.util.Vector;
 import javax.swing.JCheckBox;
-import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.ListSelectionModel;
 import java.util.Timer;
 import java.util.TimerTask;
 import javax.swing.event.ListSelectionEvent;
-import javax.swing.event.ListSelectionListener;
 import javax.swing.table.DefaultTableModel;
 
 /**
  *
  * @author MS-1
  */
-public class Main_Frame extends javax.swing.JFrame {
+public final class Main_Frame extends javax.swing.JFrame {
     /** Table of checkboxes to encode bits data */
     private JCheckBox[][] checkBoxes;
     /** Table of bytes from selected checkboxes */
@@ -65,7 +63,7 @@ public class Main_Frame extends javax.swing.JFrame {
 
     /**
      * Creates new form Main_Frame
-     * @param   filename    path of CSV elphabet file
+     * @param filename path of CSV elphabet file
      */
     public Main_Frame(String filename) {
         initComponents();
@@ -96,7 +94,7 @@ public class Main_Frame extends javax.swing.JFrame {
         for(int i = 0; i < 5; i++) {
             for(int j = 0; j < 8; j++) {
                 checkBoxes[i][j].addItemListener((ItemEvent e) -> {
-                    if (enableCheckListener) {
+                    if ((enableCheckListener) && (list.getSize() >= 0)) {
                         checkboxClick((JCheckBox)e.getSource());
                         modifiedData = true;
                         jStatusBar.setText(MODIFIED);                      
@@ -105,17 +103,14 @@ public class Main_Frame extends javax.swing.JFrame {
             }
         }
         
-        jTableMain.getSelectionModel().addListSelectionListener(new ListSelectionListener() {
-            @Override
-            public void valueChanged(ListSelectionEvent e) {
-                //System.out.println("Try to rename from " + selectedRow);
-                if (selectedRow != jTableMain.getSelectedRow() && (jTableMain.getSelectedRow() > -1)) {
-                    selectedRow = jTableMain.getSelectedRow();
-                    //System.out.println("rename to " + selectedRow);
-                    trySaveCSV();
-                    openSigleItem();
-                    
-                }
+        jTableMain.getSelectionModel().addListSelectionListener((ListSelectionEvent e) -> {
+            //System.out.println("Try to rename from " + selectedRow);
+            if (selectedRow != jTableMain.getSelectedRow() && (jTableMain.getSelectedRow() > -1)) {
+                selectedRow = jTableMain.getSelectedRow();
+                //System.out.println("rename to " + selectedRow);
+                trySaveCSV();
+                openSigleItem();
+                
             }
         });
         // to load all data from new item
@@ -168,8 +163,13 @@ public class Main_Frame extends javax.swing.JFrame {
     
     /** Enable buttons when conditions are good */
     private void tryEnableButtons() {
+        boolean enableButtonsData = true;
         if (jTableMain.getRowCount() > 0) {
+            if (selectedRow < 0) {
+                enableButtonsData = false;
+            }
             jButtonDelete.setEnabled(true);
+            jButtonAddCopy.setEnabled(true);
             if (selectedRow < jTableMain.getRowCount() - 1) {
                 jButtonDown.setEnabled(true);
             } else
@@ -179,9 +179,25 @@ public class Main_Frame extends javax.swing.JFrame {
             } else
                 jButtonUp.setEnabled(false);
         } else {
+            enableButtonsData = false;
             jButtonUp.setEnabled(false);
             jButtonDown.setEnabled(false);
             jButtonDelete.setEnabled(false);
+            jButtonAddCopy.setEnabled(false);
+            
+        }
+        if (enableButtonsData) {
+            jButtonClear.setEnabled(true);
+            jButtonBitsDown.setEnabled(true);
+            jButtonBitsUp.setEnabled(true);
+            jButtonBytesDown.setEnabled(true);
+            jButtonBytesUp.setEnabled(true);
+        } else {
+            jButtonClear.setEnabled(false);
+            jButtonBitsDown.setEnabled(false);
+            jButtonBitsUp.setEnabled(false);
+            jButtonBytesDown.setEnabled(false);
+            jButtonBytesUp.setEnabled(false);
         }
     }
 
@@ -371,7 +387,7 @@ public class Main_Frame extends javax.swing.JFrame {
         jButtonSaveToFile = new javax.swing.JButton();
         jButtonUp = new javax.swing.JButton();
         jButtonDown = new javax.swing.JButton();
-        jPanel1 = new javax.swing.JPanel();
+        jPanelData = new javax.swing.JPanel();
         jCheckPanel = new javax.swing.JPanel();
         jCheck_00 = new javax.swing.JCheckBox();
         jCheck_01 = new javax.swing.JCheckBox();
@@ -516,7 +532,7 @@ public class Main_Frame extends javax.swing.JFrame {
             }
         });
 
-        jPanel1.setBorder(javax.swing.BorderFactory.createEtchedBorder());
+        jPanelData.setBorder(javax.swing.BorderFactory.createEtchedBorder());
 
         jCheckPanel.setBorder(javax.swing.BorderFactory.createEtchedBorder());
 
@@ -711,7 +727,8 @@ public class Main_Frame extends javax.swing.JFrame {
 
         jLabelNumbers.setFont(new java.awt.Font("Courier New", 1, 9)); // NOI18N
         jLabelNumbers.setHorizontalAlignment(javax.swing.SwingConstants.LEFT);
-        jLabelNumbers.setText("jLabel5");
+        jLabelNumbers.setText("  0   0   0   0   0");
+        jLabelNumbers.setToolTipText("");
 
         jButtonClear.setText("Clear");
         jButtonClear.setMargin(new java.awt.Insets(2, 2, 2, 2));
@@ -740,15 +757,15 @@ public class Main_Frame extends javax.swing.JFrame {
             }
         });
 
-        javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
-        jPanel1.setLayout(jPanel1Layout);
-        jPanel1Layout.setHorizontalGroup(
-            jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(jPanel1Layout.createSequentialGroup()
+        javax.swing.GroupLayout jPanelDataLayout = new javax.swing.GroupLayout(jPanelData);
+        jPanelData.setLayout(jPanelDataLayout);
+        jPanelDataLayout.setHorizontalGroup(
+            jPanelDataLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jPanelDataLayout.createSequentialGroup()
                 .addContainerGap()
-                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                .addGroup(jPanelDataLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
                     .addComponent(jLabelNumbers, javax.swing.GroupLayout.PREFERRED_SIZE, 109, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addGroup(jPanel1Layout.createSequentialGroup()
+                    .addGroup(jPanelDataLayout.createSequentialGroup()
                         .addComponent(jButtonBitsDown)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(jButtonClear, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
@@ -756,19 +773,19 @@ public class Main_Frame extends javax.swing.JFrame {
                         .addComponent(jButtonBitsUp))
                     .addComponent(jCheckPanel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                .addGroup(jPanelDataLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(jButtonBytesDown)
                     .addComponent(jButtonBytesUp))
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
-        jPanel1Layout.setVerticalGroup(
-            jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
-                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(jPanel1Layout.createSequentialGroup()
+        jPanelDataLayout.setVerticalGroup(
+            jPanelDataLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanelDataLayout.createSequentialGroup()
+                .addGroup(jPanelDataLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(jPanelDataLayout.createSequentialGroup()
                         .addContainerGap()
                         .addComponent(jCheckPanel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                    .addGroup(jPanel1Layout.createSequentialGroup()
+                    .addGroup(jPanelDataLayout.createSequentialGroup()
                         .addGap(71, 71, 71)
                         .addComponent(jButtonBytesDown)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
@@ -776,7 +793,7 @@ public class Main_Frame extends javax.swing.JFrame {
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(jLabelNumbers)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                .addGroup(jPanelDataLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jButtonClear, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(jButtonBitsDown)
                     .addComponent(jButtonBitsUp))
@@ -826,37 +843,35 @@ public class Main_Frame extends javax.swing.JFrame {
                     .addGroup(layout.createSequentialGroup()
                         .addComponent(jButtonUp)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                        .addComponent(jPanelData, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                     .addGroup(layout.createSequentialGroup()
-                        .addComponent(jButtonDown)
-                        .addGap(101, 101, 101)
-                        .addComponent(jButtonSaveToFile, javax.swing.GroupLayout.PREFERRED_SIZE, 63, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                        .addGap(120, 120, 120)
+                        .addComponent(jButtonSaveToFile, javax.swing.GroupLayout.PREFERRED_SIZE, 63, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(jButtonDown))
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
                 .addContainerGap()
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
                     .addGroup(layout.createSequentialGroup()
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
                             .addComponent(jButtonUp)
-                            .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                        .addComponent(jButtonDown)
-                        .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                    .addGroup(layout.createSequentialGroup()
-                        .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 282, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                                .addComponent(jButtonAdd, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addComponent(jButtonAddCopy)
-                                .addComponent(jButtonSaveToFile)
-                                .addComponent(jStatusBar, javax.swing.GroupLayout.PREFERRED_SIZE, 23, javax.swing.GroupLayout.PREFERRED_SIZE))
-                            .addComponent(jButtonDelete)
-                            .addComponent(jLabelDyskietka, javax.swing.GroupLayout.PREFERRED_SIZE, 23, javax.swing.GroupLayout.PREFERRED_SIZE))
-                        .addGap(0, 11, Short.MAX_VALUE))))
+                            .addComponent(jPanelData, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                        .addGap(8, 8, 8)
+                        .addComponent(jButtonDown))
+                    .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 282, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                        .addComponent(jButtonAdd, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addComponent(jButtonAddCopy)
+                        .addComponent(jButtonSaveToFile)
+                        .addComponent(jStatusBar, javax.swing.GroupLayout.PREFERRED_SIZE, 23, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(jButtonDelete)
+                    .addComponent(jLabelDyskietka, javax.swing.GroupLayout.PREFERRED_SIZE, 23, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addGap(0, 11, Short.MAX_VALUE))
         );
 
         pack();
@@ -875,17 +890,17 @@ public class Main_Frame extends javax.swing.JFrame {
         if (jTableMain.getRowCount() > 0) {
             modifiedData = true;
             jStatusBar.setText(MODIFIED);
-            if (list.get(selectedRow).getSign() != ((String)jTableMain.getValueAt(selectedRow, 1))) {
+            if (!list.get(selectedRow).getSign().equals((String)jTableMain.getValueAt(selectedRow, 1))) {
                 //System.out.println("different chars");
                 list.get(selectedRow).setSign(((String)jTableMain.getValueAt(selectedRow, 1)));
             }
-            if (list.get(selectedRow).getDescription() != (String)jTableMain.getValueAt(selectedRow, 2)) {
+            if (!list.get(selectedRow).getDescription().equals((String)jTableMain.getValueAt(selectedRow, 2))) {
                 //System.out.println("different description");
                 list.get(selectedRow).setDescription((String)jTableMain.getValueAt(selectedRow, 2));
             }
             if (list.get(selectedRow).getId() != (int)jTableMain.getValueAt(selectedRow, 0)) {
                 int newId = (int)jTableMain.getValueAt(selectedRow, 0);
-                int newSelected = 0;
+                int newSelected;
                 if (list.isIdInList(newId)) {
                     newSelected = list.tryFindIndex(newId);
                     list.swapIndexes(selectedRow, newSelected);
@@ -907,17 +922,19 @@ public class Main_Frame extends javax.swing.JFrame {
     }//GEN-LAST:event_jTableMainPropertyChange
 
     private void jButtonBytesDownActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonBytesDownActionPerformed
-        if (list.get(selectedRow).getModifiedDots() > 0) {
-            modifiedData = true;
-            jStatusBar.setText(MODIFIED);
+        if (selectedRow >= 0) {
+            if (list.get(selectedRow).getModifiedDots() > 0) {
+                modifiedData = true;
+                jStatusBar.setText(MODIFIED);
+            }
+            list.get(selectedRow).shiftBytes(-1);
+            openSigleItem();
         }
-        list.get(selectedRow).shiftBytes(-1);
-        openSigleItem();
         
     }//GEN-LAST:event_jButtonBytesDownActionPerformed
 
     private void jButtonUpActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonUpActionPerformed
-        if (jButtonUp.isEnabled()) {
+        if (jButtonUp.isEnabled() && (list.getSize() > 0)) {
             list.swapIndexes(selectedRow, selectedRow - 1);
             // repair selectedRow
             //selectedRow = selectedRow - 1;
@@ -928,7 +945,7 @@ public class Main_Frame extends javax.swing.JFrame {
     }//GEN-LAST:event_jButtonUpActionPerformed
 
     private void jButtonDownActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonDownActionPerformed
-        if (jButtonDown.isEnabled()) {
+        if (jButtonDown.isEnabled() && (list.getSize() > 0)) {
             list.swapIndexes(selectedRow, selectedRow + 1);
             // repair selectedRow
             //selectedRow = selectedRow + 1;
@@ -941,7 +958,7 @@ public class Main_Frame extends javax.swing.JFrame {
     private void jButtonSaveToFileActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonSaveToFileActionPerformed
         trySaveCSV();
         AVR_Save avr = new AVR_Save(list);
-        String paths = "";
+        String paths;
         try {
             paths = avr.saveHeader()+"\n";
             paths+=avr.saveC();
@@ -964,10 +981,12 @@ public class Main_Frame extends javax.swing.JFrame {
     }//GEN-LAST:event_jButtonAddActionPerformed
 
     private void jButtonDeleteActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonDeleteActionPerformed
-        if (jTableMain.getRowCount() > 0) {
+        if ((selectedRow >= 0) && jButtonDelete.isEnabled()) {
             if (JOptionPane.showConfirmDialog(
             this,
-            "Are you sure to removing/clearing '" + list.get(selectedRow).getSign()+ "' char?",
+            "Are you sure to removing/clearing '" 
+                    + list.get(selectedRow).getSign()+ "' char with id " 
+                    + list.get(selectedRow).getId() + "?",
             "Question - removing/clearing char",
             JOptionPane.YES_NO_OPTION) == 0) {
                 try {
@@ -984,7 +1003,9 @@ public class Main_Frame extends javax.swing.JFrame {
                 refreshList();
                 //System.out.println(selectedRow);
                 if (list.getSize() == selectedRow) {
-                    jTableMain.setRowSelectionInterval(selectedRow - 1, selectedRow - 1);  
+                    if (selectedRow > 0) 
+                        jTableMain.setRowSelectionInterval(selectedRow - 1, selectedRow - 1); 
+                    else selectedRow = -1;
                 } else {
                     int newSelected = selectedRow;
                     selectedRow = -1;
@@ -1017,33 +1038,41 @@ public class Main_Frame extends javax.swing.JFrame {
     }//GEN-LAST:event_jButtonClearActionPerformed
 
     private void jButtonBytesUpActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonBytesUpActionPerformed
-        if (list.get(selectedRow).getModifiedDots() > 0) {
-            modifiedData = true;
-            jStatusBar.setText(MODIFIED);
+        if (selectedRow >= 0) {
+            if (list.get(selectedRow).getModifiedDots() > 0) {
+                modifiedData = true;
+                jStatusBar.setText(MODIFIED);
+            }
+            list.get(selectedRow).shiftBytes(1);
+            openSigleItem();
         }
-        list.get(selectedRow).shiftBytes(1);
-        openSigleItem();
     }//GEN-LAST:event_jButtonBytesUpActionPerformed
 
     private void jButtonBitsDownActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonBitsDownActionPerformed
-        list.get(selectedRow).shiftBits(-1);
-        openSigleItem();
-        modifiedData = true;
-        jStatusBar.setText(MODIFIED);
+        if (selectedRow >= 0) {
+            list.get(selectedRow).shiftBits(-1);
+            openSigleItem();
+            modifiedData = true;
+            jStatusBar.setText(MODIFIED);
+        }
     }//GEN-LAST:event_jButtonBitsDownActionPerformed
 
     private void jButtonBitsUpActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonBitsUpActionPerformed
-        list.get(selectedRow).shiftBits(1);
-        openSigleItem();
-        modifiedData = true;
-        jStatusBar.setText(MODIFIED);
+        if (selectedRow >= 0) {
+            list.get(selectedRow).shiftBits(1);
+            openSigleItem();
+            modifiedData = true;
+            jStatusBar.setText(MODIFIED);
+        }
     }//GEN-LAST:event_jButtonBitsUpActionPerformed
 
     private void jButtonAddCopyActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonAddCopyActionPerformed
-        int newId = list.getNextEmptyId(jTableMain.getSelectedRow());
-        addItemToListTable(new Alphabet_Char(list.get(selectedRow), newId));
-        modifiedData = true;
-        jStatusBar.setText(MODIFIED);
+        if (selectedRow >= 0) {
+            int newId = list.getNextEmptyId(jTableMain.getSelectedRow());
+            addItemToListTable(new Alphabet_Char(list.get(selectedRow), newId));
+            modifiedData = true;
+            jStatusBar.setText(MODIFIED);
+        }
     }//GEN-LAST:event_jButtonAddCopyActionPerformed
 
     /**
@@ -1074,10 +1103,8 @@ public class Main_Frame extends javax.swing.JFrame {
         //</editor-fold>
         
         /* Create and display the form */
-        java.awt.EventQueue.invokeLater(new Runnable() {
-            public void run() {
-                new Main_Frame("empty.csv").setVisible(true);
-            }
+        java.awt.EventQueue.invokeLater(() -> {
+            new Main_Frame("empty.csv").setVisible(true);
         });
     }
     
@@ -1136,7 +1163,7 @@ public class Main_Frame extends javax.swing.JFrame {
     private javax.swing.JCheckBox jCheck_47;
     private javax.swing.JLabel jLabelDyskietka;
     private javax.swing.JLabel jLabelNumbers;
-    private javax.swing.JPanel jPanel1;
+    private javax.swing.JPanel jPanelData;
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JLabel jStatusBar;
     private javax.swing.JTable jTableMain;

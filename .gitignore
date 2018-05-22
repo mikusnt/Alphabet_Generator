@@ -31,3 +31,4 @@ AVR_files/
 Alphabets/
 settings.conf
 *.csv
+*.db
