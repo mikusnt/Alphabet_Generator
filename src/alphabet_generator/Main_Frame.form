@@ -676,7 +676,7 @@
       <Properties>
         <Property name="horizontalAlignment" type="int" value="11"/>
         <Property name="icon" type="javax.swing.Icon" editor="org.netbeans.modules.form.editors2.IconEditor">
-          <Image iconType="2" name="C:\Users\MS-1\Desktop\dyskietka_318-127696.jpg"/>
+          <Image iconType="3" name="/alphabet_generator/dyskietka_318-127696.jpg"/>
         </Property>
         <Property name="maximumSize" type="java.awt.Dimension" editor="org.netbeans.beaninfo.editors.DimensionEditor">
           <Dimension value="[32, 32]"/>

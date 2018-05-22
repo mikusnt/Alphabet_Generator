@@ -144,7 +144,7 @@ public class Main_Frame extends javax.swing.JFrame {
     }
     
     private void trySaveCSV() {
-        System.out.println(modifiedData);
+        //System.out.println(modifiedData);
         if (modifiedData == true) {
             try {
             timer = new Timer();
@@ -242,8 +242,8 @@ public class Main_Frame extends javax.swing.JFrame {
     }
 
     /**
-     *
-     * @param model
+     * // clear model of fFrame
+     * @param model to clear
      */
     public static void deleteAllRows(final DefaultTableModel model) {
         for( int i = model.getRowCount() - 1; i >= 0; i-- ) {
@@ -763,7 +763,7 @@ public class Main_Frame extends javax.swing.JFrame {
         jStatusBar.setDebugGraphicsOptions(javax.swing.DebugGraphics.NONE_OPTION);
 
         jLabelDyskietka.setHorizontalAlignment(javax.swing.SwingConstants.TRAILING);
-        jLabelDyskietka.setIcon(new javax.swing.ImageIcon("C:\\Users\\MS-1\\Desktop\\dyskietka_318-127696.jpg")); // NOI18N
+        jLabelDyskietka.setIcon(new javax.swing.ImageIcon(getClass().getResource("/alphabet_generator/dyskietka_318-127696.jpg"))); // NOI18N
         jLabelDyskietka.setMaximumSize(new java.awt.Dimension(32, 32));
         jLabelDyskietka.setOpaque(true);
 

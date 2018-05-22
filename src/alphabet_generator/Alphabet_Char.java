@@ -68,7 +68,7 @@ public class Alphabet_Char implements Comparator<Alphabet_Char>,Comparable<Alpha
      */
     public Alphabet_Char(int id) {
         this.id = id;
-        this.sign = "???";
+        this.sign = "_empty";
         this.description = "";
         this.length = 1;
     }
@@ -176,7 +176,7 @@ public class Alphabet_Char implements Comparator<Alphabet_Char>,Comparable<Alpha
     /**
      * SHL and SHR operiations in codes table. One index is like one bit in original shift operations. 
      * Positive value is SHL, negative is SHR.
-     * @param shiftValue
+     * @param shiftValue direction and shift value
      */
     public void shiftBytes(int shiftValue) {
        if (shiftValue > 0) {

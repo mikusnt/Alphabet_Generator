@@ -16,21 +16,22 @@
  */
 package alphabet_generator;
 
-import java.awt.Desktop;
 import java.io.File;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.text.SimpleDateFormat;
 import java.util.Date;
-import javax.swing.JOptionPane;
 
 /**
- *
+ * To save and load Alphabet_List to/from file in CSV format
  * @author MS
  */
 public class AVR_Save {
+    /** List to save */
     private final Alphabet_List list;
+    /** directory and filename of header file */
     private final String headerName = "AVR_files/alphabet_codes.h";
+    /** header contents */
     private final String header = "/**\n" +
         " * @file alphabet_codes.h\n" +
         " * @author\t\tMikolaj Stankowiak <br>\n" +
@@ -55,27 +56,31 @@ public class AVR_Save {
         "extern const uint8_t uiAlLength[ALPHABET_SIZE] PROGMEM;\n" +
         "\n" +
         "#endif /* SEQ_ALPHABET_CODES_H_ */";
-            private final String cName = "AVR_files/alphabet_codes.c";
-            private final String cPart1 = "#include \"alphabet_codes.h\"\n" +
+    /** directory and filename of C file */
+    private final String cName = "AVR_files/alphabet_codes.c";
+    /** C file contents part 1 */
+    private final String cPart1 = "#include \"alphabet_codes.h\"\n" +
         "\n" +
         "const uint8_t uiAlphabet[ALPHABET_SIZE][%d] PROGMEM = {\n";
+    /** C file contents part 2 */
     private final String cPart2 = "};\n" +
         "\n" +
         "const uint8_t uiAlLength[ALPHABET_SIZE] PROGMEM = {\n";
+    /** C file contents part 3 */
     private final String cPart3 = "};";
     
     /**
-     *
-     * @param list
+     * Default constructor
+     * @param list to save
      */
     public AVR_Save(Alphabet_List list) {
         this.list = list;
     }
     
     /**
-     *
-     * @return
-     * @throws IOException
+     * Saves header file, throws exception when error
+     * @return path of header file
+     * @throws IOException when IO error
      */
     public String saveHeader() throws IOException {
         File f = new File(headerName);
@@ -93,9 +98,9 @@ public class AVR_Save {
     }
 
     /**
-     *
-     * @return
-     * @throws IOException
+     * Saves C file, throws exception when error
+     * @return path of C file
+     * @throws IOException when IO error
      */
     public String saveC() throws IOException {
         File f = new File(cName);
@@ -138,7 +143,7 @@ public class AVR_Save {
     }
 
     /**
-     *
+     * Generate line of object to write into C file
      * @param withComma if is true, after close bracket is comma
      * @param prefix string before comment
      * @return one index of two-dim table in C
@@ -166,9 +171,9 @@ public class AVR_Save {
     */
     
     /**
-     *
-     * @param prefix
-     * @return
+     * Generate C file contents (table of codes) from Alphabet_List
+     * @param prefix string before lines
+     * @return string of codes
      */
     private String getCCodesTable(Alphabet_List list, String prefix) {
         String out = "";
@@ -182,9 +187,9 @@ public class AVR_Save {
     }
     
     /**
-     *
+     * Generate C file contents (table of length) from Alphabet_List
      * @param prefix
-     * @return
+     * @return string of lengths
      */
     private String getCLengthsTable(Alphabet_List list, String prefix) {
         String out = "";

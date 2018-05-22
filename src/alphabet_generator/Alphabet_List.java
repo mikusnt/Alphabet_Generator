@@ -61,8 +61,8 @@ public class Alphabet_List implements Iterable<Alphabet_Char>{
      * object's id is in the list.
      * @param e object to add
      * @return index of added object
-     * @throws IllegalAccessException
-     * @throws NullPointerException
+     * @throws IllegalAccessException when id of object is in the list
+     * @throws NullPointerException when object is null
      */
     public int tryAdd(Alphabet_Char e) throws IllegalAccessException, NullPointerException {
         if (e == null)
@@ -97,7 +97,7 @@ public class Alphabet_List implements Iterable<Alphabet_Char>{
      * on the list. When removed index isn't on the first or on the last position
      * object position is reset to default
      * @param index to remove
-     * @throws java.lang.IllegalAccessException
+     * @throws java.lang.IllegalAccessException when index isn't on the list
      */
     public void remove(int index) throws IllegalAccessException {
         if (index < getSize()) {
@@ -122,9 +122,12 @@ public class Alphabet_List implements Iterable<Alphabet_Char>{
      * @param index of original object, position in the list
      * @param newId of the object, must be unique, otherwise throw exception
      * @return new index in list
-     * @throws IllegalAccessException
+     * @throws IllegalAccessException when newId is in the list or index isn't 
+     * on the list
      */
     public int renameItemId(int index, int newId) throws IllegalAccessException {
+        if (index >= list.size())
+            throw new IllegalAccessException("Index " + index + " isn't in the list");
         if (list.get(index).getId() != newId) {
             if (isIdInList(newId)) 
                 throw new IllegalAccessException("Id " + newId + " is in the list");
@@ -231,7 +234,7 @@ public class Alphabet_List implements Iterable<Alphabet_Char>{
      * Save list to CSV file with specific name, throws exception when IO error
      * was occured.
      * @param filename of the CSV file
-     * @throws java.io.IOException
+     * @throws java.io.IOException when IO error
      */
     public void saveToCSV(String filename) throws IOException {
         try (BufferedWriter file = Files.newBufferedWriter(Paths.get(filename), Charset.forName("windows-1250"))) {
@@ -241,11 +244,12 @@ public class Alphabet_List implements Iterable<Alphabet_Char>{
     
     /**
      * Constructor of object from CSV file. Throws exception when IO error or
-     * data are't correct
-     * @param filename
-     * @return
-     * @throws java.io.IOException
-     * @throws java.lang.IllegalAccessException
+     * data are't correct.
+     * @param filename of the CSV file
+     * @return list object
+     * @throws java.io.IOException when IO error
+     * @throws java.lang.IllegalAccessException when are two or more the same 
+     * id in file
      */
     public static Alphabet_List loadFromCSV(String filename) throws IOException, IllegalAccessException {
         Alphabet_List newList = new Alphabet_List();
@@ -288,8 +292,8 @@ public class Alphabet_List implements Iterable<Alphabet_Char>{
     /**
      * Find first id which isn't on the list and is further on the list from 
      * index position
-     * @param index 
-     * @return
+     * @param index position in list
+     * @return new empty id further id of index on the list
      */
     public int getNextEmptyId(int index) {
         if (list.isEmpty())
@@ -312,8 +316,8 @@ public class Alphabet_List implements Iterable<Alphabet_Char>{
     
     /**
      *
-     * @param index
-     * @return
+     * @param index position of object
+     * @return object on the specific position
      */
     public Alphabet_Char get(int index) {
         return list.get(index);

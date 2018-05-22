@@ -24,14 +24,12 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
-import java.io.UnsupportedEncodingException;
-import java.net.URLDecoder;
 import java.util.Properties;
 import javax.swing.JFileChooser;
 import javax.swing.JOptionPane;
 
 /**
- *
+ * Frame to load and test alphabet file
  * @author MS
  */
 public class Filename_Frame extends javax.swing.JFrame {
@@ -48,8 +46,8 @@ public class Filename_Frame extends javax.swing.JFrame {
     }
     
     /**
-     *
-     * @param frame
+     * Sets frame on the center position of the screen
+     * @param frame to centering position
      */
     public static void setCenterPosition(javax.swing.JFrame frame) {
         Dimension dim = Toolkit.getDefaultToolkit().getScreenSize();
@@ -62,6 +60,7 @@ public class Filename_Frame extends javax.swing.JFrame {
         frame.setLocation(x, y);
     }
     
+    /** Set enable open button when length of file is not empty */
     private void tryEnableOpen() {
         if (jTextDir.getText().length() > 0)
             jButtonOpen.setEnabled(true);
@@ -69,6 +68,8 @@ public class Filename_Frame extends javax.swing.JFrame {
             jButtonOpen.setEnabled(false);
     }
     
+    /** Read properties file when exists and load full path of alphabet to 
+     * jTextDir. */
     private void readProperties() {
        try {
          Properties prop = new Properties();
@@ -82,10 +83,12 @@ public class Filename_Frame extends javax.swing.JFrame {
            System.out.println(e.toString());
        }
     }
+    
+    /** Write path of alphabet file from jTextDir to properties file. */
     private void writeProperties() {
         try {
             if (jTextDir.getText().length() == 0)
-                throw new NullPointerException("Pusta ścieżka");
+                throw new NullPointerException("Empty path");
             OutputStream output = new FileOutputStream(CONFIG_NAME);
             Properties prop = new Properties();
             prop.setProperty(PATH_KEY, jTextDir.getText());
