@@ -73,7 +73,8 @@ public class Alphabet_Char implements Comparator<Alphabet_Char>,Comparable<Alpha
         this.id = id;
         this.sign = "_empty";
         this.description = "";
-        this.length = 1;
+        this.codes[2] = (1 << 7);
+        calculateDotsLength();
     }
     
     /**
